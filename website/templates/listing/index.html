@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Title{% endblock %}</h1>
+{% endblock%}
+
+{% block content %}
+    <ul>
+        {% for show in shows %}
+            <li> {{ show['title'] }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
