@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}{{ title }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <ul>
+        {% for source in sources %}
+            <li>
+                <a href="{{ source['url'] }}">{{ source['source'] }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

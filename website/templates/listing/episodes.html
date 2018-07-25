@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Episodes{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <ul>
+        {% for episode in episodes %}
+            <li>
+                <a href="{{ url_for('listing.sources', episode_id=episode['url']['ep'][0]) }}">{{ episode['picture']|safe }}{{ episode['title'] }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    {% if next_page %}
+        <a href="{{ url_for('listing.episodes', show_id=next_page['url']['film'][0], page_num=next_page['url']['page'][0]) }}">{{ next_page['title'] }}</a>
+    {% endif %}
+{% endblock %}
