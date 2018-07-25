@@ -1,11 +1,16 @@
 import functools
 import requests
+import re
 from urllib.parse import urlparse, parse_qs, urlencode
 from xml.etree import ElementTree
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+
+# if show contains a date in the title, replace 'film=' with 'ep=' to get the 
+# link to the actual episode
+# the other episode links are links to other dates (could be before or after current date)
 
 bp = Blueprint('listing', __name__)
 _category_endpoints = {
@@ -28,6 +33,10 @@ _category_text = {
     'j-drama': 'Japanese Drama',
     'movies': 'Movies'
 }
+
+def contains_date(text):
+    date_pattern = '\d{4}-\d{2}-\d{2}'
+    return re.search(date_pattern, text)
 
 def _retrieve_listings(xml_root):
     return [{'title': item.find('title').text,
@@ -59,7 +68,8 @@ def shows(category,page_num):
     return render_template('listing/shows.html',shows=show_listings,
                                                 next_page=possible_pagination,
                                                 category=category,
-                                                category_text=_category_text[category])
+                                                category_text=_category_text[category],
+                                                contains_date=contains_date)
 
 @bp.route('/<show_id>/episodes/page/<page_num>')
 def episodes(show_id, page_num):
@@ -71,6 +81,10 @@ def episodes(show_id, page_num):
 
     return render_template('listing/episodes.html',episodes=episodes,
                                                     next_page=possible_pagination)
+
+@bp.route('/<show_id>')
+def episodes_dated_shows(show_id):
+    return redirect(url_for('.sources', episode_id=show_id))
 
 @bp.route('/<episode_id>/sources')
 def sources(episode_id):
