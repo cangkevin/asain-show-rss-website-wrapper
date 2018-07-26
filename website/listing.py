@@ -15,13 +15,13 @@ from flask import (
 bp = Blueprint('listing', __name__)
 _category_endpoints = {
     'recently-updated': 'aHR0cDovL2RyYW1hY2l0eS5pby8=',
-    'hk-drama': 'channel=aHR0cDovL2RyYW1hY2l0eS5pby9ob25nLWtvbmctZHJhbWEv',
-    'hk-variety-news': 'channel=aHR0cDovL2RyYW1hY2l0eS5pby9ob25nLWtvbmctc2hvdy8=',
-    'k-drama': 'channel=aHR0cDovL2RyYW1hY2l0eS5pby9rb3JlYS1kcmFtYS8=',
-    'tw-drama': 'channel=aHR0cDovL2RyYW1hY2l0eS5pby90YWl3YW4tZHJhbWEv',
-    'c-drama': 'channel=aHR0cDovL2RyYW1hY2l0eS5pby9jaGluZXNlLWRyYW1hLTEv',
-    'j-drama': 'channel=aHR0cDovL2RyYW1hY2l0eS5pby9qYXBhbmVzZS1kcmFtYS8=',
-    'movies': 'channel=aHR0cDovL2RyYW1hY2l0eS5pby9tb3ZpZXMv'
+    'hk-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby9ob25nLWtvbmctZHJhbWEv',
+    'hk-variety-news': 'aHR0cDovL2RyYW1hY2l0eS5pby9ob25nLWtvbmctc2hvdy8=',
+    'k-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby9rb3JlYS1kcmFtYS8=',
+    'tw-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby90YWl3YW4tZHJhbWEv',
+    'c-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby9jaGluZXNlLWRyYW1hLTEv',
+    'j-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby9qYXBhbmVzZS1kcmFtYS8=',
+    'movies': 'aHR0cDovL2RyYW1hY2l0eS5pby9tb3ZpZXMv'
 }
 _category_text = {
     'recently-updated': 'Recently Updated',
@@ -34,7 +34,7 @@ _category_text = {
     'movies': 'Movies'
 }
 
-def contains_date(text):
+def _contains_date(text):
     date_pattern = '\d{4}-\d{2}-\d{2}'
     return re.search(date_pattern, text)
 
@@ -69,7 +69,8 @@ def shows(category,page_num):
                                                 next_page=possible_pagination,
                                                 category=category,
                                                 category_text=_category_text[category],
-                                                contains_date=contains_date)
+                                                contains_date=_contains_date,
+                                                categories_text=_category_text)
 
 @bp.route('/<show_id>/episodes/page/<page_num>')
 def episodes(show_id, page_num):
@@ -80,7 +81,8 @@ def episodes(show_id, page_num):
     episodes, possible_pagination = _retrieve_possible_pagination_link(episodes)
 
     return render_template('listing/episodes.html',episodes=episodes,
-                                                    next_page=possible_pagination)
+                                                    next_page=possible_pagination,
+                                                    categories_text=_category_text)
 
 @bp.route('/<show_id>')
 def episodes_dated_shows(show_id):
@@ -91,8 +93,11 @@ def sources(episode_id):
     r = requests.get('http://rsscity.co/dramacity/',params={'ep':episode_id})
     root = ElementTree.fromstring(r.content)[0]
     title = root.find('title').text
+    # embed_link = root.find('link')
     sources = [{'source': item.find('title').text,
                 'url': item.find('enclosure').attrib['url']}
                 for item in root.iter('item')]
 
-    return render_template('listing/sources.html',sources=sources,title=title)
+    return render_template('listing/sources.html',sources=sources,
+                                                    title=title,
+                                                    categories_text=_category_text)
