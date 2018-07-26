@@ -1,8 +1,39 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Test</title>
-<section>
-    <header>
-        {% block header %}{% endblock %}
-    </header>
-    {% block content %}{% endblock %}
-</section>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
+
+        <title>{% block title %}{% endblock %} - Test</title>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="#">SEAshows</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#categories" aria-controls="categories" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="categories">
+                <ul class="navbar-nav">
+                    {% for short_text,formal_text in categories_text.items() %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('listing.shows', category=short_text, page_num=1) }}">{{ formal_text }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            <section>
+                <h1>
+                    {% block header %}{% endblock %}
+                </h1>
+                {% block content %}{% endblock %}
+            </section>
+        </div>
+    </body>
+</html>

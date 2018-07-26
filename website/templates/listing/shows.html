@@ -8,17 +8,24 @@
     <ul>
         {% for show in shows %}
             <li> 
-                {% if not contains_date(show['title']) %}
-                    <a href="{{ url_for('listing.episodes', 
-                                        show_id=show['url']['film'][0], 
-                                        page_num='1') }}">
+                {% if category == 'movies' %}
+                    <a href="{{ url_for('listing.sources',
+                                        episode_id=show['url']['ep'][0]) }}">
                         {{ show['picture']|safe }}{{ show['title'] }}
                     </a>
-                {% else %}
-                    <a href="{{ url_for('listing.episodes_dated_shows',
-                                        show_id=show['url']['film'][0]) }}">
-                        {{ show['picture']|safe}}{{ show['title'] }}
-                    </a>
+                {%  else %}
+                    {% if not contains_date(show['title']) %}
+                        <a href="{{ url_for('listing.episodes', 
+                                            show_id=show['url']['film'][0], 
+                                            page_num='1') }}">
+                            {{ show['picture']|safe }}{{ show['title'] }}
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('listing.episodes_dated_shows',
+                                            show_id=show['url']['film'][0]) }}">
+                            {{ show['picture']|safe }}{{ show['title'] }}
+                        </a>
+                    {% endif %}
                 {% endif %}
             </li>
         {% endfor %}
