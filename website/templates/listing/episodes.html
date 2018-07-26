@@ -5,14 +5,18 @@
 {% endblock %}
 
 {% block content %}
-    <ul>
+    <ul class="list-group list-group-flush">
         {% for episode in episodes %}
-            <li>
-                <a href="{{ url_for('listing.sources', episode_id=episode['url']['ep'][0]) }}">{{ episode['picture']|safe }}{{ episode['title'] }}</a>
+            <li class="list-group-item">
+                <a href="{{ url_for('listing.sources', episode_id=episode.url.ep[0]) }}" 
+                    class="text-large"
+                    style="color:black;">
+                    <img src="{{episode.picture}}" class="img-thumbnail">{{ episode.title }}
+                </a>
             </li>
         {% endfor %}
     </ul>
     {% if next_page %}
-        <a href="{{ url_for('listing.episodes', show_id=next_page['url']['film'][0], page_num=next_page['url']['page'][0]) }}">{{ next_page['title'] }}</a>
+        <a href="{{ url_for('listing.episodes', show_id=next_page.url.film[0], page_num=next_page.url.page[0]) }}">{{ next_page.title }}</a>
     {% endif %}
 {% endblock %}

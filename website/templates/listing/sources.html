@@ -8,7 +8,11 @@
     <ul>
         {% for source in sources %}
             <li>
-                <a href="{{ source['url'] }}">{{ source['source'] }}</a>
+                <a href="{{ source.url }}"
+                    class="text-bigger"
+                    style="color:black;">
+                    {{ source['source'] }}
+                </a>
             </li>
         {% endfor %}
     </ul>

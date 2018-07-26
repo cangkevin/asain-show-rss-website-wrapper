@@ -1,15 +1,15 @@
 import functools
 import requests
 import re
+
 from urllib.parse import urlparse, parse_qs, urlencode
+from bs4 import BeautifulSoup
 from xml.etree import ElementTree
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
-# if show contains a date in the title, replace 'film=' with 'ep=' to get the 
-# link to the actual episode
 # the other episode links are links to other dates (could be before or after current date)
 
 bp = Blueprint('listing', __name__)
@@ -34,6 +34,8 @@ _category_text = {
     'movies': 'Movies'
 }
 
+_ignore_shows = ['aHR0cDovL2RyYW1hY2l0eS5pby9ob3ctdG8td2F0Y2gtZHJhbWEtbW92aWVzLXNob3dzLW9uLW1vYmlsZS1hcHAv']
+
 def _contains_date(text):
     date_pattern = '\d{4}-\d{2}-\d{2}'
     return re.search(date_pattern, text)
@@ -41,8 +43,8 @@ def _contains_date(text):
 def _retrieve_listings(xml_root):
     return [{'title': item.find('title').text,
                 'url': parse_qs(urlparse(item.find('enclosure').attrib['url']).query),
-                'picture': item.find('description').text.strip()}
-                for item in xml_root.iter('item')]
+                'picture': BeautifulSoup(item.find('description').text.strip()).find('img')['src']}
+                 for item in xml_root.iter('item')]
 
 def _retrieve_possible_pagination_link(listing):
     possible_pagination = listing.pop()
@@ -51,7 +53,6 @@ def _retrieve_possible_pagination_link(listing):
         listing.append(possible_pagination)
         possible_pagination = None
     return listing, possible_pagination
-
 
 @bp.route('/')
 def index():
@@ -64,13 +65,14 @@ def shows(category,page_num):
     root = ElementTree.fromstring(r.content)[0]
     show_listings = _retrieve_listings(root)
     show_listings, possible_pagination = _retrieve_possible_pagination_link(show_listings)
-    
+    show_listings = [show for show in show_listings if show['url']['film'][0] not in _ignore_shows]
+
     return render_template('listing/shows.html',shows=show_listings,
                                                 next_page=possible_pagination,
                                                 category=category,
-                                                category_text=_category_text[category],
+                                                categories_text=_category_text,
                                                 contains_date=_contains_date,
-                                                categories_text=_category_text)
+                                                ignore_list=_ignore_shows)
 
 @bp.route('/<show_id>/episodes/page/<page_num>')
 def episodes(show_id, page_num):
