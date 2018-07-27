@@ -16,7 +16,21 @@
             </li>
         {% endfor %}
     </ul>
+    <br>
     {% if next_page %}
-        <a href="{{ url_for('listing.episodes', show_id=next_page.url.film[0], page_num=next_page.url.page[0]) }}">{{ next_page.title }}</a>
-    {% endif %}
+    <nav aria-label="Shows display pages">
+        <ul class="pagination justify-content-center">
+            {% if next_page.url.page[0]|int - 1 != 1 %}
+            <li class="page-item">
+                <a class="page-link text-bigger"
+                    href="{{ url_for('listing.episodes', show_id=next_page.url.film[0], page_num=next_page.url.page[0]|int-1) }}">Previous</a>
+            </li>
+            {% endif %}
+            <li class="page-item">
+                    <a class="page-link text-bigger"
+                        href="{{ url_for('listing.episodes', show_id=next_page.url.film[0], page_num=next_page.url.page[0]) }}">Next</a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}
 {% endblock %}
