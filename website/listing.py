@@ -65,7 +65,7 @@ def shows(category,page_num):
     root = ElementTree.fromstring(r.content)[0]
     show_listings = _retrieve_listings(root)
     show_listings, possible_pagination = _retrieve_possible_pagination_link(show_listings)
-    show_listings = [show for show in show_listings if show['url']['film'][0] not in _ignore_shows]
+    show_listings = [show for show in show_listings if show['url']['ep'][0] not in _ignore_shows]
 
     return render_template('listing/shows.html',shows=show_listings,
                                                 next_page=possible_pagination,
@@ -93,9 +93,9 @@ def episodes_dated_shows(show_id):
 @bp.route('/<episode_id>/sources')
 def sources(episode_id):
     r = requests.get('http://rsscity.co/dramacity/',params={'ep':episode_id})
+    
     root = ElementTree.fromstring(r.content)[0]
     title = root.find('title').text
-    # embed_link = root.find('link')
     sources = [{'source': item.find('title').text,
                 'url': item.find('enclosure').attrib['url']}
                 for item in root.iter('item')]
