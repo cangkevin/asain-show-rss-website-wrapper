@@ -54,6 +54,14 @@ def _retrieve_possible_pagination_link(listing):
         possible_pagination = None
     return listing, possible_pagination
 
+def _fetch_show_id(url_info):
+    show_id = ""
+    if 'film' in url_info.keys():
+        show_id = url_info['film'][0]
+    elif 'ep' in url_info.keys():
+        show_id = url_info['ep'][0]
+    return show_id
+
 @bp.route('/')
 def index():
     return redirect(url_for('.shows',category='recently-updated',page_num=1))
@@ -65,7 +73,7 @@ def shows(category,page_num):
     root = ElementTree.fromstring(r.content)[0]
     show_listings = _retrieve_listings(root)
     show_listings, possible_pagination = _retrieve_possible_pagination_link(show_listings)
-    show_listings = [show for show in show_listings if show['url']['ep'][0] not in _ignore_shows]
+    show_listings = [show for show in show_listings if _fetch_show_id(show['url']) not in _ignore_shows]
 
     return render_template('listing/shows.html',shows=show_listings,
                                                 next_page=possible_pagination,
