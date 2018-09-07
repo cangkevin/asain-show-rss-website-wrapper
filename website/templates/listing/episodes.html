@@ -23,12 +23,12 @@
             {% if next_page.url.page[0]|int - 1 != 1 %}
             <li class="page-item">
                 <a class="page-link text-bigger"
-                    href="{{ url_for('listing.episodes', show_id=next_page.url.film[0], page_num=next_page.url.page[0]|int-1) }}">Previous</a>
+                    href="{{ url_for('listing.episodes', show_id=next_page.url.film[0], page_num=next_page.url.page[0]|int-1) }}">Previous - 以前</a>
             </li>
             {% endif %}
             <li class="page-item">
                     <a class="page-link text-bigger"
-                        href="{{ url_for('listing.episodes', show_id=next_page.url.film[0], page_num=next_page.url.page[0]) }}">Next</a>
+                        href="{{ url_for('listing.episodes', show_id=next_page.url.film[0], page_num=next_page.url.page[0]) }}">Next - 下一个</a>
             </li>
         </ul>
     </nav>

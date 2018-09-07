@@ -10,8 +10,6 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
-# the other episode links are links to other dates (could be before or after current date)
-
 bp = Blueprint('listing', __name__)
 _category_endpoints = {
     'recently-updated': 'aHR0cDovL2RyYW1hY2l0eS5pby8=',
@@ -55,7 +53,6 @@ def _retrieve_possible_pagination_link(listing):
     return listing, possible_pagination
 
 def _fetch_show_id(url_info):
-    show_id = ""
     if 'film' in url_info.keys():
         show_id = url_info['film'][0]
     elif 'ep' in url_info.keys():
@@ -90,13 +87,12 @@ def episodes(show_id, page_num):
     episodes = _retrieve_listings(root)
     episodes, possible_pagination = _retrieve_possible_pagination_link(episodes)
 
+    if len(episodes) == 1 and not episodes[0]['url']:
+        return redirect(url_for('.sources', episode_id=show_id))
+
     return render_template('listing/episodes.html',episodes=episodes,
                                                     next_page=possible_pagination,
                                                     categories_text=_category_text)
-
-@bp.route('/<show_id>')
-def episodes_dated_shows(show_id):
-    return redirect(url_for('.sources', episode_id=show_id))
 
 @bp.route('/<episode_id>/sources')
 def sources(episode_id):
