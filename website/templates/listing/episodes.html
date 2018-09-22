@@ -16,4 +16,19 @@
             </li>
         {% endfor %}
     </ul>
+    <br>
+    {% if paginations is defined %}
+        <nav aria-label="Episodes display pages">
+            <ul class="pagination justify-content-center">
+                {% for link in paginations %}
+                    <li class="page-item">
+                        <a class="page-link text-bigger"
+                            href="{{ url_for('listing.episodes', show_id=current_show, page=link.id) }}">
+                            {{ link.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endif %}
 {% endblock %}
