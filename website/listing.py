@@ -55,9 +55,9 @@ def shows(category,page):
                                                 shows=shows,
                                                 paginations=paginations)
 
-@bp.route('/episodes/<show_id>')
-def episodes(show_id):
-    response = requests.get(BASE_URL + '/info/' + show_id)
+@bp.route('/episodes/<show_id>/<page>')
+def episodes(show_id,page):
+    response = requests.get(BASE_URL + '/info/' + show_id + '/' + page)
     rss_data = feedparser.parse(response.content)
 
     page_title = rss_data.feed.title
@@ -67,6 +67,7 @@ def episodes(show_id):
     episodes, paginations = _extract_possible_paginations(entries)
 
     return render_template('listing/episodes.html',categories=CATEGORIES,
+                                                    current_show=show_id,
                                                     page_title=page_title,
                                                     episodes=episodes,
                                                     paginations=paginations)
