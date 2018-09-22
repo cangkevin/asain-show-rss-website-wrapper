@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1>{% block title %}{{ categories_text[category] }}{% endblock %}</h1>
+    <h1>{% block title %}{{ page_title }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -14,62 +14,31 @@
             <div class="row">
         {% endif %}
         <div class="col-3">
-            {% if category == 'movies' %}
-                <a href="{{ url_for('listing.sources',
-                                    episode_id=show.url.ep[0]) }}"
-                    style="color:black;">
-                    <div class="container">
-                        <img src="{{show.picture}}" class="w-100">
-                        <div class="row font-weight-bold text-bigger">
-                            {{ show.title }}
-                        </div>
+            <a href="{{ url_for('listing.episodes', show_id=show.id) }}" style="color:black;">
+                <div class="container">
+                    <img src="{{ show.picture }}" class="w-100">
+                    <div class="row font-weight-bold text-bigger">
+                        {{ show.title }}
                     </div>
-                </a>
-            {% else %}
-                {% if not contains_date(show.title) %}
-                    <a href="{{ url_for('listing.episodes',
-                                        show_id=show.url.film[0],
-                                        page_num=1) }}"
-                        style="color:black;">
-                        <div class="container">
-                            <img src="{{show.picture}}" class="w-100">
-                            <div class="row font-weight-bold text-bigger">
-                                {{ show.title }}
-                            </div>
-                        </div>
-                    </a>
-                {% else %}
-                    <a href="{{ url_for('listing.sources',
-                                        episode_id=show.url.film[0]) }}"
-                        style="color:black;">
-                        <div class="container">
-                            <img src="{{show.picture}}" class="w-100">
-                            <div class="row font-weight-bold text-bigger">
-                                {{ show.title }}
-                            </div>
-                        </div>
-                    </a>
-                {% endif %}
-            {% endif %}
+                </div>
+            </a>
         </div>
         {% if loop.last %}
             </div>
         {% endif %}
     {% endfor %}
     <br>
-    {% if next_page %}
+    {% if paginations is defined %}
         <nav aria-label="Shows display pages">
             <ul class="pagination justify-content-center">
-                {% if next_page.url.page[0]|int - 1 != 1 %}
-                <li class="page-item">
-                    <a class="page-link text-bigger"
-                        href="{{ url_for('listing.shows', category=category, page_num=next_page.url.page[0]|int-1) }}">Previous - 以前</a>
-                </li>
-                {% endif %}
-                <li class="page-item">
+                {% for link in paginations %}
+                    <li class="page-item">
                         <a class="page-link text-bigger"
-                            href="{{ url_for('listing.shows', category=category, page_num=next_page.url.page[0]) }}">Next - 下一个</a>
-                </li>
+                            href="{{ url_for('listing.shows', category=current_category, page=link.id) }}">
+                            {{ link.title }}
+                        </a>
+                    </li>
+                {% endfor %}
             </ul>
         </nav>
     {% endif %}

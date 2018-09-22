@@ -1,109 +1,86 @@
+import os
+import re
 import functools
 import requests
-import re
-
-from urllib.parse import urlparse, parse_qs, urlencode
+import feedparser
 from bs4 import BeautifulSoup
-from xml.etree import ElementTree
+from urllib.parse import urlsplit
+import xml.etree.ElementTree as ET
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
-bp = Blueprint('listing', __name__)
-_category_endpoints = {
-    'recently-updated': 'aHR0cDovL2RyYW1hY2l0eS5pby8=',
-    'hk-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby9ob25nLWtvbmctZHJhbWEv',
-    'hk-variety-news': 'aHR0cDovL2RyYW1hY2l0eS5pby9ob25nLWtvbmctc2hvdy8=',
-    'k-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby9rb3JlYS1kcmFtYS8=',
-    'tw-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby90YWl3YW4tZHJhbWEv',
-    'c-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby9jaGluZXNlLWRyYW1hLTEv',
-    'j-drama': 'aHR0cDovL2RyYW1hY2l0eS5pby9qYXBhbmVzZS1kcmFtYS8=',
-    'movies': 'aHR0cDovL2RyYW1hY2l0eS5pby9tb3ZpZXMv'
-}
-_category_text = {
-    'recently-updated': 'Recently Updated',
+CATEGORIES = {
+    'recently-added-can-dub': 'Recently Added (Cantonese)',
     'hk-drama': 'HK Drama',
-    'hk-variety-news': 'HK Variety/News',
-    'k-drama': 'Korean Drama',
-    'tw-drama': 'Taiwanese Drama',
-    'c-drama': 'Chinese Drama',
-    'j-drama': 'Japanese Drama',
-    'movies': 'Movies'
+    'hk-show': 'HK Variety & News',
+    'c-drama': 'China Drama (English)',
+    'c-drama-can-dub': 'China Drama (Cantonese)'
 }
+BASE_URL = 'http://myrss.nu/drama/'
 
-_ignore_shows = ['aHR0cDovL2RyYW1hY2l0eS5pby9ob3ctdG8td2F0Y2gtZHJhbWEtbW92aWVzLXNob3dzLW9uLW1vYmlsZS1hcHAv']
+bp = Blueprint('listing',__name__)
 
-def _contains_date(text):
-    date_pattern = '\d{4}-\d{2}-\d{2}'
-    return re.search(date_pattern, text)
+def _is_pagination(title):
+    pagination_pattern = r'Page \d'
+    return re.match(pagination_pattern, title)
 
-def _retrieve_listings(xml_root):
-    return [{'title': item.find('title').text,
-                'url': parse_qs(urlparse(item.find('enclosure').attrib['url']).query),
-                'picture': BeautifulSoup(item.find('description').text.strip()).find('img')['src']}
-                 for item in xml_root.iter('item')]
+def _extract_possible_paginations(entries):
+    pagination_links = [entry for entry in entries if _is_pagination(entry['title'])]
+    entries[:] = [entry for entry in entries if not _is_pagination(entry['title'])]
+    return entries, pagination_links[::-1]
 
-def _retrieve_possible_pagination_link(listing):
-    possible_pagination = listing.pop()
-    possible_pagination_url = possible_pagination['url']
-    if 'page' not in possible_pagination_url:
-        listing.append(possible_pagination)
-        possible_pagination = None
-    return listing, possible_pagination
-
-def _fetch_show_id(url_info):
-    if 'film' in url_info.keys():
-        show_id = url_info['film'][0]
-    elif 'ep' in url_info.keys():
-        show_id = url_info['ep'][0]
-    return show_id
 
 @bp.route('/')
 def index():
-    return redirect(url_for('.shows',category='recently-updated',page_num=1))
+    return redirect(url_for('.shows',category='recently-added-can-dub',page=1))
 
-@bp.route('/<category>/page/<page_num>')
-def shows(category,page_num):
-    r = requests.get('http://rsscity.co/dramacity/',params={'channel':_category_endpoints[category], 
-                                                            'page':page_num})
-    root = ElementTree.fromstring(r.content)[0]
-    show_listings = _retrieve_listings(root)
-    show_listings, possible_pagination = _retrieve_possible_pagination_link(show_listings)
-    show_listings = [show for show in show_listings if _fetch_show_id(show['url']) not in _ignore_shows]
 
-    return render_template('listing/shows.html',shows=show_listings,
-                                                next_page=possible_pagination,
-                                                category=category,
-                                                categories_text=_category_text,
-                                                contains_date=_contains_date,
-                                                ignore_list=_ignore_shows)
+@bp.route('/shows/<category>/<page>')
+def shows(category,page):
+    response = requests.get(BASE_URL + '/category/' + category + '/' + page)
+    rss_data = feedparser.parse(response.content)
 
-@bp.route('/<show_id>/episodes/page/<page_num>')
-def episodes(show_id, page_num):
-    r = requests.get('http://rsscity.co/dramacity/',params={'film':show_id,
-                                                            'page':page_num})
-    root = ElementTree.fromstring(r.content)[0]
-    episodes = _retrieve_listings(root)
-    episodes, possible_pagination = _retrieve_possible_pagination_link(episodes)
+    page_title = rss_data.feed.title
+    entries = [{'title': entry.title,
+                'picture': BeautifulSoup(entry.summary).find('img')['src'],
+                'id': os.path.normpath(urlsplit(entry.links[0].href).path).split(os.sep).pop()} 
+                for entry in rss_data.entries]
+    shows, paginations = _extract_possible_paginations(entries)
 
-    if len(episodes) == 1 and not episodes[0]['url']:
-        return redirect(url_for('.sources', episode_id=show_id))
+    return render_template('listing/shows.html',categories=CATEGORIES,
+                                                current_category=category,
+                                                page_title=page_title,
+                                                shows=shows,
+                                                paginations=paginations)
 
-    return render_template('listing/episodes.html',episodes=episodes,
-                                                    next_page=possible_pagination,
-                                                    categories_text=_category_text)
+@bp.route('/episodes/<show_id>')
+def episodes(show_id):
+    response = requests.get(BASE_URL + '/info/' + show_id)
+    rss_data = feedparser.parse(response.content)
 
-@bp.route('/<episode_id>/sources')
+    page_title = rss_data.feed.title
+    entries = [{'title': entry.title,
+                'id': os.path.normpath(urlsplit(entry.links[0].href).path).split(os.sep).pop()} 
+                for entry in rss_data.entries]
+    episodes, paginations = _extract_possible_paginations(entries)
+
+    return render_template('listing/episodes.html',categories=CATEGORIES,
+                                                    page_title=page_title,
+                                                    episodes=episodes,
+                                                    paginations=paginations)
+
+@bp.route('/sources/<episode_id>')
 def sources(episode_id):
-    r = requests.get('http://rsscity.co/dramacity/',params={'ep':episode_id})
-    
-    root = ElementTree.fromstring(r.content)[0]
-    title = root.find('title').text
-    sources = [{'source': item.find('title').text,
-                'url': item.find('enclosure').attrib['url']}
-                for item in root.iter('item')]
+    response = requests.get(BASE_URL + '/episode/' + episode_id)
+    rss_data = feedparser.parse(response.content)
 
-    return render_template('listing/sources.html',sources=sources,
-                                                    title=title,
-                                                    categories_text=_category_text)
+    page_title = rss_data.feed.title
+    entries = [{'title': entry.title,
+                'url': entry.links[0].href} 
+                for entry in rss_data.entries]
+
+    return render_template('listing/sources.html', categories=CATEGORIES,
+                                                    page_title=page_title,
+                                                    sources=entries)
