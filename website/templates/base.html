@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="{{ url_for('static',filename='css/custom.css') }}">
         <script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.0.0.min.js') }}" defer></script>
         <script type="text/javascript" src="{{ url_for('static',filename='js/bootstrap.min.js') }}" defer></script>
-        <title>{% block title %}{% endblock %} - Test</title>
+        <title>{% block title %}{% endblock %}</title>
     </head>
 
     <body>
@@ -20,11 +20,11 @@
 
             <div class="collapse navbar-collapse" id="categories">
                 <ul class="navbar-nav mr-auto">
-                    {% for short_text,formal_text in categories_text.items() %}
+                    {% for short_text, format_text in categories.items() %}
                         <li class="nav-item">
-                            <a class="nav-link {% if short_text == category %} active {% endif %}" 
-                                href="{{ url_for('listing.shows', category=short_text, page_num=1) }}">
-                                {{ formal_text }}
+                            <a class="nav-link {% if format_text == page_title %} active {% endif %}"
+                                href="{{ url_for('listing.shows', category=short_text, page=1)}}">
+                                {{ format_text }}
                             </a>
                         </li>
                     {% endfor %}

@@ -5,12 +5,15 @@ name = "pypi"
 
 [dev-packages]
 pylint = "*"
+pytest = "*"
+coverage = "*"
 
 [packages]
-flask = "*"
 requests = "*"
+flask = "*"
+coverage = "*"
 "beautifulsoup4" = "*"
-requests-futures = "*"
+feedparser = "*"
 
 [requires]
 python_version = "3.6"
