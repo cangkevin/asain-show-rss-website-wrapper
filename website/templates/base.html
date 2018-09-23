@@ -20,13 +20,15 @@
 
             <div class="collapse navbar-collapse" id="categories">
                 <ul class="navbar-nav mr-auto">
-                    {% for short_text, format_text in categories.items() %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if format_text == page_title %} active {% endif %}"
-                                href="{{ url_for('listing.shows', category=short_text, page=1)}}">
-                                {{ format_text }}
-                            </a>
-                        </li>
+                    {% for domain,categories in domains.items() %}
+                        {% for short_text,format_text in categories.items() %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if format_text == page_title %} active {% endif %}"
+                                    href="{{ url_for('listing.'+domain, category=short_text, page=1)}}">
+                                    {{ format_text }}
+                                </a>
+                            </li>
+                        {% endfor %}
                     {% endfor %}
                 </ul>
             </div>

@@ -12,11 +12,19 @@ bp = Blueprint('listing',__name__)
 def index():
     return redirect(url_for('.shows',category='recently-added-can-dub',page=1))
 
+@bp.route('/movies/<category>/<page>')
+def movies(category,page):
+    response = client.get_movies(category, page)
+
+    return render_template('listing/movies.html',domains={'shows':client.show_categories, 'movies':client.movie_categories},
+                                                current_category=category,
+                                                response=response)
+
 @bp.route('/shows/<category>/<page>')
 def shows(category,page):
     response = client.get_shows(category, page)
 
-    return render_template('listing/shows.html',categories={**client.show_categories, **client.movie_categories},
+    return render_template('listing/shows.html',domains={'shows':client.show_categories, 'movies':client.movie_categories},
                                                 current_category=category,
                                                 response=response)
 
@@ -24,7 +32,7 @@ def shows(category,page):
 def episodes(show_id,page):
     response = client.get_episodes(show_id, page)
 
-    return render_template('listing/episodes.html',categories={**client.show_categories, **client.movie_categories},
+    return render_template('listing/episodes.html',domains={'shows':client.show_categories, 'movies':client.movie_categories},
                                                     current_show=show_id,
                                                     response=response)
 
@@ -32,5 +40,5 @@ def episodes(show_id,page):
 def sources(episode_id):
     response = client.get_sources(episode_id)
 
-    return render_template('listing/sources.html',categories={**client.show_categories, **client.movie_categories},
+    return render_template('listing/sources.html',domains={'shows':client.show_categories, 'movies':client.movie_categories},
                                                     response=response)

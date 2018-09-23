@@ -34,6 +34,19 @@ class RSSClient:
             'hk-movies': 'HK Movies',
             'c-movies-can-dub': 'China Movies (Cantonese)'
         }
+
+    def get_movies(self, category, page):
+        response = requests.get(self._base_url + '/movies/' + category + '/' + page)
+        rss_data = feedparser.parse(response.content)
+
+        page_title = rss_data.feed.title
+        entries = [{'title': entry.title,
+                    'picture': BeautifulSoup(entry.summary,features='html.parser').find('img')['src'],
+                    'id': os.path.normpath(urlsplit(entry.links[0].href).path).split(os.sep).pop()}
+                    for entry in rss_data.entries]
+        episodes, paginations = RSSClientUtil.extract_possible_paginations(entries)
+
+        return RSSResponse(page_title, episodes, paginations)
         
     def get_shows(self, category, page):
         response = requests.get(self._base_url + '/category/' + category + '/' + page)
@@ -41,7 +54,7 @@ class RSSClient:
 
         page_title = rss_data.feed.title
         entries = [{'title': entry.title,
-                    'picture': BeautifulSoup(entry.summary,features="html.parser").find('img')['src'],
+                    'picture': BeautifulSoup(entry.summary,features='html.parser').find('img')['src'],
                     'id': os.path.normpath(urlsplit(entry.links[0].href).path).split(os.sep).pop()} 
                     for entry in rss_data.entries]
         episodes, paginations = RSSClientUtil.extract_possible_paginations(entries)
