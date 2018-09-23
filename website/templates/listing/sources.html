@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-{% block header %}{{ page_title }}{% endblock %}
+{% block header %}{{ response.title() }}{% endblock %}
 
 {% block content %}
     <ul class="list-group list-group-flush">
-        {% for source in sources %}
+        {% for source in response.items() %}
             <li>
                 <a href="{{ source.url }}"
                     class="text-bigger"
