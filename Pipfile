@@ -6,13 +6,12 @@ name = "pypi"
 [dev-packages]
 pylint = "*"
 pytest = "*"
-coverage = "*"
 pycodestyle = "*"
+pytest-cov = "*"
 
 [packages]
 requests = "*"
 flask = "*"
-coverage = "*"
 "beautifulsoup4" = "*"
 feedparser = "*"
 
