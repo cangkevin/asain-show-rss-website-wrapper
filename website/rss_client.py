@@ -1,26 +1,59 @@
+import os
+import re
+
+from urllib.parse import urlsplit
+
 import requests
 import feedparser
-import re
-import os
+
 from bs4 import BeautifulSoup
-from urllib.parse import urlsplit
 from .models import RSSResponse
 
 
 class RSSClientUtil:
     @staticmethod
-    def is_pagination(title):
-        pagination_pattern = r'Page \d'
-        return re.match(pagination_pattern, title)
-
-    @staticmethod
     def extract_paginations(entries):
+        pagination_pattern = r'Page \d'
+
         pagination_links = [entry for entry in entries
-                            if RSSClientUtil.is_pagination(entry['title'])]
+                            if re.match(pagination_pattern, entry['title'])]
         entries[:] = [entry for entry in entries
-                      if not RSSClientUtil.is_pagination(entry['title'])]
+                      if not re.match(pagination_pattern, entry['title'])]
 
         return entries, pagination_links[::-1]
+
+    @staticmethod
+    def extract_picture(entry):
+        return BeautifulSoup(
+            entry.summary,
+            features='html.parser').find('img')['src']
+
+    @staticmethod
+    def extract_id(entry):
+        return os.path.normpath(
+            urlsplit(
+                entry.links[0].href
+            ).path
+        ).split(os.sep).pop()
+
+    @staticmethod
+    def extract_show_or_movie_entries(data):
+        return [{'title': entry.title,
+                 'picture': RSSClientUtil.extract_picture(entry),
+                 'id': RSSClientUtil.extract_id(entry)}
+                for entry in data.entries]
+
+    @staticmethod
+    def extract_episodes(data):
+        return [{'title': entry.title,
+                 'id': RSSClientUtil.extract_id(entry)}
+                for entry in data.entries]
+
+    @staticmethod
+    def extract_sources(data):
+        return [{'title': entry.title,
+                 'url': entry.links[0].href}
+                for entry in data.entries]
 
 
 class RSSClient:
@@ -41,77 +74,52 @@ class RSSClient:
 
     def get_movies(self, category, page):
         response = requests.get(''.join([self._base_url,
-                                         '/movies/',
+                                         'movies/',
                                          category,
                                          '/',
                                          page]))
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
-        entries = [{'title': entry.title,
-                    'picture': BeautifulSoup(
-                                    entry.summary,
-                                    features='html.parser'
-                               ).find('img')['src'],
-                    'id': os.path.normpath(
-                                    urlsplit(
-                                        entry.links[0].href
-                                    ).path
-                          ).split(os.sep).pop()}
-                   for entry in rss_data.entries]
+        entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
         episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
         return RSSResponse(page_title, episodes, paginations)
 
     def get_shows(self, category, page):
         response = requests.get(''.join([self._base_url,
-                                         '/category/',
+                                         'category/',
                                          category,
                                          '/',
                                          page]))
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
-        entries = [{'title': entry.title,
-                    'picture': BeautifulSoup(
-                                    entry.summary,
-                                    features='html.parser'
-                               ).find('img')['src'],
-                    'id': os.path.normpath(
-                                    urlsplit(
-                                        entry.links[0].href
-                                    ).path).split(os.sep).pop()}
-                   for entry in rss_data.entries]
+        entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
         episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
         return RSSResponse(page_title, episodes, paginations)
 
     def get_episodes(self, show, page):
         response = requests.get(''.join([self._base_url,
-                                         '/info/',
+                                         'info/',
                                          show,
                                          '/',
                                          page]))
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
-        entries = [{'title': entry.title,
-                    'id': os.path.normpath(
-                                    urlsplit(
-                                        entry.links[0].href
-                                    ).path).split(os.sep).pop()}
-                   for entry in rss_data.entries]
+        entries = RSSClientUtil.extract_episodes(rss_data)
         episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
         return RSSResponse(page_title, episodes, paginations)
 
     def get_sources(self, episode):
         response = requests.get(''.join([self._base_url,
-                                         '/episode/',
+                                         'episode/',
                                          episode]))
         rss_data = feedparser.parse(response.content)
         page_title = rss_data.feed.title
-        entries = [{'title': entry.title,
-                    'url': entry.links[0].href} for entry in rss_data.entries]
+        entries = RSSClientUtil.extract_sources(rss_data)
 
         return RSSResponse(page_title, entries)
