@@ -18,7 +18,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import listing
-    app.register_blueprint(listing.bp)
+    from . import core
+    app.register_blueprint(core.bp)
 
     return app

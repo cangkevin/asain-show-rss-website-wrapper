@@ -58,7 +58,7 @@ class RSSClientUtil:
 
 class RSSClient:
     def __init__(self):
-        self._base_url = os.environ.get('BASE_URL')
+        self.base_url = os.environ.get('BASE_URL')
         self.show_categories = {
             'recently-added-can-dub': 'Recently Added (Cantonese)',
             'hk-drama': 'HK Drama',
@@ -72,12 +72,20 @@ class RSSClient:
             'c-movies-can-dub': 'China Movies (Cantonese)'
         }
 
+    def build_movies_uri(self, category, page):
+        return ''.join([self.base_url, 'movies/', category, '/', page])
+
+    def build_shows_uri(self, category, page):
+        return ''.join([self.base_url, 'category/', category, '/', page])
+
+    def build_episodes_uri(self, show, page):
+        return ''.join([self.base_url, 'info/', show, '/', page])
+
+    def build_sources_uri(self, episode):
+        return ''.join([self.base_url, 'episode/', episode])
+
     def get_movies(self, category, page):
-        response = requests.get(''.join([self._base_url,
-                                         'movies/',
-                                         category,
-                                         '/',
-                                         page]))
+        response = requests.get(self.build_movies_uri(category, page))
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
@@ -87,11 +95,7 @@ class RSSClient:
         return RSSResponse(page_title, episodes, paginations)
 
     def get_shows(self, category, page):
-        response = requests.get(''.join([self._base_url,
-                                         'category/',
-                                         category,
-                                         '/',
-                                         page]))
+        response = requests.get(self.build_shows_uri(category, page))
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
@@ -101,11 +105,7 @@ class RSSClient:
         return RSSResponse(page_title, episodes, paginations)
 
     def get_episodes(self, show, page):
-        response = requests.get(''.join([self._base_url,
-                                         'info/',
-                                         show,
-                                         '/',
-                                         page]))
+        response = requests.get(self.build_episodes_uri(show, page))
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
@@ -115,9 +115,7 @@ class RSSClient:
         return RSSResponse(page_title, episodes, paginations)
 
     def get_sources(self, episode):
-        response = requests.get(''.join([self._base_url,
-                                         'episode/',
-                                         episode]))
+        response = requests.get(self.build_sources_uri(episode))
         rss_data = feedparser.parse(response.content)
         page_title = rss_data.feed.title
         entries = RSSClientUtil.extract_sources(rss_data)
