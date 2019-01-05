@@ -8,7 +8,7 @@ import responses
 def test_get_movies(rss_client, mocked_response):
     with open(Path('tests/data/movie_response.txt'), 'rb') as resp:
         mocked_response.add(
-            responses.GET, rss_client.build_movies_uri('hk-movies','1'),
+            responses.GET, rss_client.build_movies_uri('hk-movies', '1'),
             body=resp, status=200)
         rss_resp = rss_client.get_movies('hk-movies', '1')
 
