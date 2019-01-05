@@ -9,6 +9,7 @@ pytest = "*"
 pycodestyle = "*"
 pytest-cov = "*"
 responses = "*"
+coveralls = "*"
 
 [packages]
 requests = "*"

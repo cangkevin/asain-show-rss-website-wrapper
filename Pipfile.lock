@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fbc0861d966e94016ba3b9b15d976f2f3cb6162dc4fbcf8764b93b8bc6640124"
+            "sha256": "f4af96d918265e3fbc57cfc15da50a72531f7e922d17af6e8f7cf543b0cbdbcb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,12 +18,12 @@
     "default": {
         "beautifulsoup4": {
             "hashes": [
-                "sha256:194ec62a25438adcb3fdb06378b26559eda1ea8a747367d34c33cef9c7f48d57",
-                "sha256:90f8e61121d6ae58362ce3bed8cd997efb00c914eae0ff3d363c32f9a9822d10",
-                "sha256:f0abd31228055d698bb392a826528ea08ebb9959e6bea17c606fd9c9009db938"
+                "sha256:1ed70a0e99742653953d68462378a1a8eb65dca5f7c8fa44a05a2a0b3545df67",
+                "sha256:6a7f5e0efc563cd1ffeefba6d528b97aa0d313c02dd126ba6c455e5fe5bd48eb",
+                "sha256:e394827904cc4923f443e8dd2e9968343669c8e1ad7a8d62d7541e780884acb8"
             ],
             "index": "pypi",
-            "version": "==4.6.3"
+            "version": "==4.7.0"
         },
         "certifi": {
             "hashes": [
@@ -125,6 +125,13 @@
             "index": "pypi",
             "version": "==2.21.0"
         },
+        "soupsieve": {
+            "hashes": [
+                "sha256:638535780f7b966411123d56eb3b89cd1d2e42d707270c6d7d053c7720a238f3",
+                "sha256:cb61b59c55f9f6e91928a03fe4b500ac1fcef6f8e68082a630db098ab33e2126"
+            ],
+            "version": "==1.6.2"
+        },
         "urllib3": {
             "hashes": [
                 "sha256:61bf29cada3fc2fbefad4fdf059ea4bd1b4a86d2b6d15e1c7c0b582b9752fe39",
@@ -211,6 +218,20 @@
                 "sha256:ee5b8abc35b549012e03a7b1e86c09491457dba6c94112a2482b18589cc2bdb9"
             ],
             "version": "==4.5.2"
+        },
+        "coveralls": {
+            "hashes": [
+                "sha256:ab638e88d38916a6cedbf80a9cd8992d5fa55c77ab755e262e00b36792b7cd6d",
+                "sha256:b2388747e2529fa4c669fb1e3e2756e4e07b6ee56c7d9fce05f35ccccc913aa0"
+            ],
+            "index": "pypi",
+            "version": "==1.5.1"
+        },
+        "docopt": {
+            "hashes": [
+                "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
+            ],
+            "version": "==0.6.2"
         },
         "idna": {
             "hashes": [
