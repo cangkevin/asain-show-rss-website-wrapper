@@ -8,6 +8,7 @@ import feedparser
 
 from bs4 import BeautifulSoup
 from .models import RSSResponse
+from . import const
 
 
 class RSSClientUtil:
@@ -59,18 +60,8 @@ class RSSClientUtil:
 class RSSClient:
     def __init__(self):
         self.base_url = os.environ.get('BASE_URL')
-        self.show_categories = {
-            'recently-added-can-dub': 'Recently Added (Cantonese)',
-            'hk-drama': 'HK Drama',
-            'hk-show': 'HK Variety & News',
-            'c-drama': 'China Drama (English)',
-            'c-drama-can-dub': 'China Drama (Cantonese)'
-        }
-        self.movie_categories = {
-            'recently-added-can-dub': 'Recently Added (Cantonese)',
-            'hk-movies': 'HK Movies',
-            'c-movies-can-dub': 'China Movies (Cantonese)'
-        }
+        self.show_categories = const.SHOW_CATAGORIES
+        self.movie_categories = const.MOVIE_CATAGORIES
 
     def build_movies_uri(self, category, page):
         return ''.join([self.base_url, 'movies/', category, '/', page])

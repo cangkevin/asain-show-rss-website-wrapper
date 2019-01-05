@@ -3,7 +3,7 @@ from pathlib import Path
 
 import responses
 
-from website import create_app
+from website import const
 
 
 def test_landing_page_should_redirect(client):
@@ -13,7 +13,7 @@ def test_landing_page_should_redirect(client):
 
 
 def test_get_movies_page(client, rss_client, mocked_response):
-    with open(Path('tests/data/movie_response.txt'), 'rb') as resp:
+    with open(Path(const.MOVIES_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_movies_uri('hk-movies', '1'),
             body=resp, status=200)
@@ -25,7 +25,7 @@ def test_get_movies_page(client, rss_client, mocked_response):
 
 
 def test_get_shows_page(client, rss_client, mocked_response):
-    with open(Path('tests/data/show_response.txt'), 'rb') as resp:
+    with open(Path(const.SHOWS_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_shows_uri('hk-drama', '1'),
             body=resp, status=200)
@@ -37,7 +37,7 @@ def test_get_shows_page(client, rss_client, mocked_response):
 
 
 def test_get_episodes_page(client, rss_client, mocked_response):
-    with open(Path('tests/data/episode_response.txt'), 'rb') as resp:
+    with open(Path(const.EPISODES_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_episodes_uri('12345', '1'),
             body=resp, status=200)
@@ -49,7 +49,7 @@ def test_get_episodes_page(client, rss_client, mocked_response):
 
 
 def test_get_sources_page(client, rss_client, mocked_response):
-    with open(Path('tests/data/sources_response.txt'), 'rb') as resp:
+    with open(Path(const.SOURCES_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_sources_uri('99999'),
             body=resp, status=200)
