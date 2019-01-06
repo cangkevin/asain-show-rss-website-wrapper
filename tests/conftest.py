@@ -1,9 +1,8 @@
-import os
-import tempfile
-
 import pytest
+import responses
 
 from website import create_app
+from website.rss_client import RSSClient
 
 
 @pytest.fixture
@@ -20,3 +19,14 @@ def client(app):
 @pytest.fixture
 def runner(app):
     return app.test_cli_runner()
+
+
+@pytest.fixture
+def rss_client():
+    return RSSClient()
+
+
+@pytest.fixture
+def mocked_response():
+    with responses.RequestsMock() as rsps:
+        yield rsps

@@ -1,9 +1,8 @@
-import functools
-
 from .rss_client import RSSClient
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for
 )
+from . import const
 
 client = RSSClient()
 bp = Blueprint('listing', __name__)
@@ -20,7 +19,7 @@ def index():
 def movies(category, page):
     response = client.get_movies(category, page)
 
-    return render_template('listing/movies.html',
+    return render_template(const.MOVIES_TEMPLATE,
                            domains={'shows': client.show_categories,
                                     'movies': client.movie_categories},
                            current_category=category,
@@ -31,7 +30,7 @@ def movies(category, page):
 def shows(category, page):
     response = client.get_shows(category, page)
 
-    return render_template('listing/shows.html',
+    return render_template(const.SHOWS_TEMPLATE,
                            domains={'shows': client.show_categories,
                                     'movies': client.movie_categories},
                            current_category=category,
@@ -42,7 +41,7 @@ def shows(category, page):
 def episodes(show_id, page):
     response = client.get_episodes(show_id, page)
 
-    return render_template('listing/episodes.html',
+    return render_template(const.EPISODES_TEMPLATE,
                            domains={'shows': client.show_categories,
                                     'movies': client.movie_categories},
                            current_show=show_id,
@@ -53,7 +52,7 @@ def episodes(show_id, page):
 def sources(episode_id):
     response = client.get_sources(episode_id)
 
-    return render_template('listing/sources.html',
+    return render_template(const.SOURCES_TEMPLATE,
                            domains={'shows': client.show_categories,
                                     'movies': client.movie_categories},
                            response=response)
