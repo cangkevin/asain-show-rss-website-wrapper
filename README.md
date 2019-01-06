@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/568adf9d5c824379aa087f1b54dcb565)](https://app.codacy.com/app/cangkevin/SEAshows?utm_source=github.com&utm_medium=referral&utm_content=cangkevin/SEAshows&utm_campaign=Badge_Grade_Settings)
 [![Build Status](https://travis-ci.org/cangkevin/SEAshows.svg?branch=develop)](https://travis-ci.org/cangkevin/SEAshows)
-[![Coverage Status](https://img.shields.io/coveralls/github/cangkevin/SEAshows/master.svg)](https://img.shields.io/coveralls/github/cangkevin/SEAshows/master.svg)
+[![Coverage Status](https://coveralls.io/repos/github/cangkevin/SEAshows/badge.svg?branch=coveralls)](https://coveralls.io/github/cangkevin/SEAshows?branch=develop)
 
 ## What is SEAshows? ##
 SEAshows is a small project that serves as a hub for southeast-asian shows and programming.
