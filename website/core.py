@@ -2,7 +2,7 @@ import functools
 
 from .rss_client import RSSClient
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for
 )
 from . import const
 
