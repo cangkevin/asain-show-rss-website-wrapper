@@ -13,7 +13,6 @@ Current content that is supported:
 - HK Movies
 - Chinese Dramas
 - Chinese Movies
-
-Majority of the content have Chinese subtitles and/or dubbed in Mandarin or Cantonese.
+- Korean Dramas
 
 SEAshows's user experience is targeted towards a particular demographic, particularly those who are not computer-savvy. There is future work planned to make the site more feature-rich for navigation and searching.

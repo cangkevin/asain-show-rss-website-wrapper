@@ -6,17 +6,18 @@ EPISODES_RESP_FILE = 'tests/data/episode_response.txt'
 SOURCES_RESP_FILE = 'tests/data/sources_response.txt'
 
 # template paths
-MOVIES_TEMPLATE = 'listing/movies.html'
-SHOWS_TEMPLATE = 'listing/shows.html'
-EPISODES_TEMPLATE = 'listing/episodes.html'
-SOURCES_TEMPLATE = 'listing/sources.html'
+MOVIES_TEMPLATE = 'core/movies.html'
+SHOWS_TEMPLATE = 'core/shows.html'
+EPISODES_TEMPLATE = 'core/episodes.html'
+SOURCES_TEMPLATE = 'core/sources.html'
 
 SHOW_CATAGORIES = {
     'recently-added-can-dub': 'Recently Added (Cantonese dub)',
     'hk-drama': 'HK Dramas',
     'hk-show': 'HK Variety & News',
     'c-drama': 'Chinese Dramas (English sub)',
-    'c-drama-can-dub': 'Chinese Dramas (Cantonese dub)'
+    'c-drama-can-dub': 'Chinese Dramas (Cantonese dub)',
+    'k-drama': 'Korean Dramas (English sub)'
 }
 
 MOVIE_CATAGORIES = {
