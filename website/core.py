@@ -5,7 +5,7 @@ from flask import (
 from . import const
 
 client = RSSClient()
-bp = Blueprint('listing', __name__)
+bp = Blueprint('core', __name__)
 
 
 @bp.route('/')
