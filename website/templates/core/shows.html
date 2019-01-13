@@ -14,7 +14,7 @@
             <div class="row">
         {% endif %}
         <div class="col-3">
-            <a href="{{ url_for('listing.episodes', show_id=show.id, page=1) }}" style="color:black;">
+            <a href="{{ url_for('core.episodes', show_id=show.id, page=1) }}" style="color:black;">
                 <div class="container">
                     <img src="{{ show.picture }}" class="w-100">
                     <div class="row font-weight-bold text-bigger">
@@ -34,7 +34,7 @@
                 {% for link in response.paginations() %}
                     <li class="page-item">
                         <a class="page-link text-bigger"
-                            href="{{ url_for('listing.shows', category=current_category, page=link.id) }}">
+                            href="{{ url_for('core.shows', category=current_category, page=link.id) }}">
                             {{ link.title }}
                         </a>
                     </li>

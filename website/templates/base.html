@@ -24,7 +24,7 @@
                         {% for short_text,format_text in categories.items() %}
                             <li class="nav-item">
                                 <a class="nav-link {% if format_text == page_title %} active {% endif %}"
-                                    href="{{ url_for('listing.'+domain, category=short_text, page=1)}}">
+                                    href="{{ url_for('core.'+domain, category=short_text, page=1)}}">
                                     {{ format_text }}
                                 </a>
                             </li>

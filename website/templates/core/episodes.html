@@ -8,7 +8,7 @@
     <ul class="list-group list-group-flush">
         {% for episode in response.items() %}
             <li class="list-group-item">
-                <a href="{{ url_for('listing.sources', episode_id=episode.id) }}"
+                <a href="{{ url_for('core.sources', episode_id=episode.id) }}"
                     class="text-large"
                     style="color:black;">
                     {{ episode.title }}
@@ -23,7 +23,7 @@
                 {% for link in response.paginations() %}
                     <li class="page-item">
                         <a class="page-link text-bigger"
-                            href="{{ url_for('listing.episodes', show_id=current_show, page=link.id) }}">
+                            href="{{ url_for('core.episodes', show_id=current_show, page=link.id) }}">
                             {{ link.title }}
                         </a>
                     </li>
