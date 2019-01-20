@@ -1,45 +1,45 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1>{% block title %}{{ response.title() }}{% endblock %}</h1>
+  <h1>{% block title %}{{ response.title() }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    {% for show in response.items() %}
-        {% if loop.first %}
-            <div class="row">
-        {% elif loop.index0 % 4 == 0 %}
-            </div>
-            <br>
-            <div class="row">
-        {% endif %}
-        <div class="col-3">
-            <a href="{{ url_for('core.episodes', show_id=show.id, page=1) }}" style="color:black;">
-                <div class="container">
-                    <img src="{{ show.picture }}" class="w-100">
-                    <div class="row font-weight-bold text-bigger">
-                        {{ show.title }}
-                    </div>
-                </div>
-            </a>
-        </div>
-        {% if loop.last %}
-            </div>
-        {% endif %}
-    {% endfor %}
-    <br>
-    {% if response.paginations() is defined %}
-        <nav aria-label="Shows display pages">
-            <ul class="pagination justify-content-center">
-                {% for link in response.paginations() %}
-                    <li class="page-item">
-                        <a class="page-link text-bigger"
-                            href="{{ url_for('core.movies', category=current_category, page=link.id) }}">
-                            {{ link.title }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </nav>
+  {% for show in response.items() %}
+    {% if loop.first %}
+      <div class="row">
+    {% elif loop.index0 % 4 == 0 %}
+      </div>
+      <br>
+      <div class="row">
     {% endif %}
+      <div class="col-3">
+        <a href="{{ url_for('core.episodes', show_id=show.id, page=1) }}" style="color:black;">
+          <div class="container">
+            <img src="{{ show.picture }}" class="w-100">
+            <div class="row font-weight-bold text-bigger">
+              {{ show.title }}
+            </div>
+          </div>
+        </a>
+      </div>
+      {% if loop.last %}
+      </div>
+      {% endif %}
+  {% endfor %}
+    <br>
+  {% if response.paginations() is defined %}
+    <nav aria-label="Shows display pages">
+      <ul class="pagination justify-content-center">
+      {% for link in response.paginations() %}
+        <li class="page-item">
+          <a class="page-link text-bigger"
+             href="{{ url_for('core.movies', category=current_category, page=link.id) }}">
+              {{ link.title }}
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
 {% endblock %}
