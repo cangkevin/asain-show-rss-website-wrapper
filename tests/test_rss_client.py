@@ -23,7 +23,7 @@ def test_get_shows(rss_client, mocked_response):
             body=resp, status=200)
         rss_resp = rss_client.get_shows('hk-drama', '1')
 
-        assert rss_resp.title() == 'HK Drama'
+        assert rss_resp.title() == 'HK Dramas'
         assert len(rss_resp.items()) == 30
         assert rss_resp.paginations()
 
@@ -50,3 +50,15 @@ def test_get_sources(rss_client, mocked_response):
         assert rss_resp.title() == 'Episode 22'
         assert len(rss_resp.items()) == 3
         assert not rss_resp.paginations()
+
+
+def test_lookup_page_title(rss_client):
+    lookup_valid_category = rss_client.lookup_page_title(
+        rss_client.show_categories, 'hk-drama', 'HK Shows'
+    )
+    lookup_invalid_category = rss_client.lookup_page_title(
+        rss_client.movie_categories, 'hk-drama', 'HK Movies'
+    )
+
+    assert lookup_valid_category == 'HK Dramas'
+    assert lookup_invalid_category == 'HK Movies'

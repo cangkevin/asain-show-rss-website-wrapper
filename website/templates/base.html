@@ -18,13 +18,22 @@
       <div class="collapse navbar-collapse" id="categories">
         <ul class="navbar-nav mr-auto">
         {% for domain,categories in domains.items() %}
-          {% for short_text,format_text in categories.items() %}
-          <li class="nav-item">
-            <a class="nav-link {% if format_text == page_title %} active {% endif %}"
-               href="{{ url_for('core.'+domain, category=short_text, page=1)}}">
-              {{ format_text }}
-            </a>
-          </li>
+          {% for label, subcategories in categories.items() %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" 
+                 data-toggle="dropdown" href="#" role="button" 
+                 aria-haspopup="true" aria-expanded="false">
+                {{ label }}
+              </a>
+              <div class="dropdown-menu">
+                {% for short_text,format_text in subcategories.items() %}
+                <a class="dropdown-item" 
+                   href="{{ url_for('core.'+domain, category=short_text, page=1) }}">
+                  {{ format_text }}
+                </a>
+                {% endfor %}
+              </div>
+            </li>
           {% endfor %}
         {% endfor %}
         </ul>
