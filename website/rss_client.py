@@ -63,6 +63,12 @@ class RSSClient:
         self.show_categories = const.SHOW_CATAGORIES
         self.movie_categories = const.MOVIE_CATAGORIES
 
+    def lookup_page_title(self, domain, category, resp_page_title):
+        for subcategory in domain.values():
+            if category in subcategory:
+                return subcategory[category]
+        return resp_page_title
+
     def build_movies_uri(self, category, page):
         return ''.join([self.base_url, 'movies/', category, '/', page])
 
@@ -79,7 +85,9 @@ class RSSClient:
         response = requests.get(self.build_movies_uri(category, page))
         rss_data = feedparser.parse(response.content)
 
-        page_title = rss_data.feed.title
+        page_title = self.lookup_page_title(
+            self.movie_categories, category, rss_data.feed.title
+        )
         entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
         episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
@@ -89,7 +97,9 @@ class RSSClient:
         response = requests.get(self.build_shows_uri(category, page))
         rss_data = feedparser.parse(response.content)
 
-        page_title = rss_data.feed.title
+        page_title = self.lookup_page_title(
+            self.show_categories, category, rss_data.feed.title
+        )
         entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
         episodes, paginations = RSSClientUtil.extract_paginations(entries)
 

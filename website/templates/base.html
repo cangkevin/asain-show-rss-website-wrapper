@@ -1,45 +1,49 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static',filename='css/custom.css') }}">
-        <script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.0.0.min.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url_for('static',filename='js/bootstrap.min.js') }}" defer></script>
-        <title>{% block title %}{% endblock %}</title>
-    </head>
-
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <a class="navbar-brand" href="#">SEAshows</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#categories" aria-controls="categories" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="categories">
-                <ul class="navbar-nav mr-auto">
-                    {% for domain,categories in domains.items() %}
-                        {% for short_text,format_text in categories.items() %}
-                            <li class="nav-item">
-                                <a class="nav-link {% if format_text == page_title %} active {% endif %}"
-                                    href="{{ url_for('core.'+domain, category=short_text, page=1)}}">
-                                    {{ format_text }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            </div>
-        </nav>
-        <div class="container">
-            <section>
-                <h1>
-                    {% block header %}{% endblock %}
-                </h1>
-                {% block content %}{% endblock %}
-            </section>
-        </div>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/custom.css') }}">
+    <script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.0.0.min.js') }}" defer></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='js/bootstrap.min.js') }}" defer></script>
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <a class="navbar-brand" href="/">SEAshows</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#categories" aria-controls="categories" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="categories">
+        <ul class="navbar-nav mr-auto">
+        {% for domain,categories in domains.items() %}
+          {% for label, subcategories in categories.items() %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" 
+                 data-toggle="dropdown" href="#" role="button" 
+                 aria-haspopup="true" aria-expanded="false">
+                {{ label }}
+              </a>
+              <div class="dropdown-menu">
+                {% for short_text,format_text in subcategories.items() %}
+                <a class="dropdown-item" 
+                   href="{{ url_for('core.'+domain, category=short_text, page=1) }}">
+                  {{ format_text }}
+                </a>
+                {% endfor %}
+              </div>
+            </li>
+          {% endfor %}
+        {% endfor %}
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      <section>
+      {% block header %}{% endblock %}
+      {% block content %}{% endblock %}
+      </section>
+    </div>
+  </body>
 </html>
