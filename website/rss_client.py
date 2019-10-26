@@ -5,10 +5,13 @@ from urllib.parse import urlsplit
 
 import requests
 import feedparser
+import logging
 
 from bs4 import BeautifulSoup
 from .models import RSSResponse
 from . import const
+
+logger = logging.getLogger(__name__)
 
 
 class RSSClientUtil:
@@ -82,6 +85,7 @@ class RSSClient:
         return ''.join([self.base_url, 'episode/', episode])
 
     def get_movies(self, category, page):
+        logger.info('Fetching movies for %s, page %s', category, page)
         response = requests.get(self.build_movies_uri(category, page))
         rss_data = feedparser.parse(response.content)
 
@@ -94,6 +98,7 @@ class RSSClient:
         return RSSResponse(page_title, episodes, paginations)
 
     def get_shows(self, category, page):
+        logger.info('Fetching shows for %s, page %s', category, page)
         response = requests.get(self.build_shows_uri(category, page))
         rss_data = feedparser.parse(response.content)
 
@@ -106,6 +111,7 @@ class RSSClient:
         return RSSResponse(page_title, episodes, paginations)
 
     def get_episodes(self, show, page):
+        logger.info('Fetching episodes for %s, page %s', show, page)
         response = requests.get(self.build_episodes_uri(show, page))
         rss_data = feedparser.parse(response.content)
 
@@ -116,6 +122,7 @@ class RSSClient:
         return RSSResponse(page_title, episodes, paginations)
 
     def get_sources(self, episode):
+        logger.info('Fetching sources for episode %s', episode)
         response = requests.get(self.build_sources_uri(episode))
         rss_data = feedparser.parse(response.content)
         page_title = rss_data.feed.title
