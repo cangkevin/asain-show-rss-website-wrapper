@@ -1,7 +1,11 @@
 from pathlib import Path
 
+import pytest
+import requests
 import responses
+
 from website import const
+from website.rss_client import ClientTimeoutError
 
 
 def test_get_movies(rss_client, mocked_response):
@@ -23,7 +27,7 @@ def test_get_shows(rss_client, mocked_response):
             body=resp, status=200)
         rss_resp = rss_client.get_shows('hk-drama', '1')
 
-        assert rss_resp.title() == 'HK Dramas'
+        assert rss_resp.title() == 'HK Drama'
         assert len(rss_resp.items()) == 30
         assert rss_resp.paginations()
 
@@ -62,3 +66,43 @@ def test_lookup_page_title(rss_client):
 
     assert lookup_valid_category == 'HK Dramas'
     assert lookup_invalid_category == 'HK Movies'
+
+
+def test_get_movies_timed_out(rss_client, mocked_response):
+    mocked_response.add(
+        responses.GET, rss_client.build_movies_uri('hk-movies', '1'),
+        body=requests.exceptions.Timeout('')
+    )
+
+    with pytest.raises(ClientTimeoutError):
+        rss_client.get_movies('hk-movies', '1')
+
+
+def test_get_shows_timed_out(rss_client, mocked_response):
+    mocked_response.add(
+        responses.GET, rss_client.build_shows_uri('hk-drama', '1'),
+        body=requests.exceptions.Timeout('')
+    )
+
+    with pytest.raises(ClientTimeoutError):
+        rss_client.get_shows('hk-drama', '1')
+
+
+def test_get_episodes_timed_out(rss_client, mocked_response):
+    mocked_response.add(
+        responses.GET, rss_client.build_episodes_uri('12345', '1'),
+        body=requests.exceptions.Timeout('')
+    )
+
+    with pytest.raises(ClientTimeoutError):
+        rss_client.get_episodes('12345', '1')
+
+
+def test_get_sources_timed_out(rss_client, mocked_response):
+    mocked_response.add(
+        responses.GET, rss_client.build_sources_uri('99999'),
+        body=requests.exceptions.Timeout('')
+    )
+
+    with pytest.raises(ClientTimeoutError):
+        rss_client.get_sources('99999')
