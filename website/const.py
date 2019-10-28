@@ -10,6 +10,7 @@ MOVIES_TEMPLATE = 'core/movies.html'
 SHOWS_TEMPLATE = 'core/shows.html'
 EPISODES_TEMPLATE = 'core/episodes.html'
 SOURCES_TEMPLATE = 'core/sources.html'
+SERVER_ERROR_TEMPLATE = '500.html'
 
 # subcategories for shows
 DRAMA_SHOWS = {
