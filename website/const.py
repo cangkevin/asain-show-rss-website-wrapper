@@ -1,3 +1,7 @@
+'''
+This module contains global constants.
+'''
+
 # file paths for mock data/response
 MOVIES_RESP_FILE = 'tests/data/movie_response.txt'
 SHOWS_RESP_FILE = 'tests/data/show_response.txt'

@@ -1,14 +1,14 @@
+"""Models used throughout the application.
+
+This module holds various model classes that are
+intended for internal use.
+
+"""
+
+
 class RSSResponse:
+    '''Model that encapsulates a resource'''
     def __init__(self, title, items, paginations=None):
-        self._title = title
-        self._items = items
-        self._paginations = paginations
-
-    def title(self):
-        return self._title
-
-    def items(self):
-        return self._items
-
-    def paginations(self):
-        return self._paginations
+        self.title = title
+        self.items = items
+        self.paginations = paginations

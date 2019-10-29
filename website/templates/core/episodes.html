@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{{ response.title() }}{% endblock %}</h1>
+  <h1>{% block title %}{{ response.title }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <ul class="list-group list-group-flush">
-  {% for episode in response.items() %}
+  {% for episode in response.items %}
     <li class="list-group-item">
       <a href="{{ url_for('core.sources', episode_id=episode.id) }}"
          class="text-large"
@@ -17,10 +17,10 @@
   {% endfor %}
   </ul>
   <br>
-  {% if response.paginations() is defined %}
+  {% if response.paginations is defined %}
     <nav aria-label="Episodes display pages">
       <ul class="pagination justify-content-center">
-      {% for link in response.paginations() %}
+      {% for link in response.paginations %}
         <li class="page-item">
           <a class="page-link text-bigger"
              href="{{ url_for('core.episodes', show_id=current_show, page=link.id) }}">
