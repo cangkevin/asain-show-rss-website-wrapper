@@ -1,24 +1,28 @@
+'''
+This module handles a client that interacts with the backend data source
+'''
 import os
 import re
 
 from urllib.parse import urlsplit
 
+import logging
 import requests
 import feedparser
-import logging
 
 from bs4 import BeautifulSoup
 from .models import RSSResponse
 from . import const
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class ClientTimeoutError(Exception):
-    pass
+    '''Custom exception class for timed out client requests'''
 
 
 class RSSClientUtil:
+    '''Class that assists with parsing responses from the RSS data source'''
     @staticmethod
     def extract_paginations(entries):
         pagination_pattern = r'Page \d'
@@ -65,6 +69,10 @@ class RSSClientUtil:
 
 
 class RSSClient:
+    '''
+    Class that serves as a client to communicate with the backend
+    RSS data source
+    '''
     def __init__(self):
         self.base_url = os.environ.get('BASE_URL')
         self.show_categories = const.SHOW_CATAGORIES
@@ -77,19 +85,24 @@ class RSSClient:
         return resp_page_title
 
     def build_movies_uri(self, category, page):
+        '''Constructs the request URI for movies endpoint'''
         return ''.join([self.base_url, 'movies/', category, '/', page])
 
     def build_shows_uri(self, category, page):
+        '''Constructs the request URI for shows endpoint'''
         return ''.join([self.base_url, 'category/', category, '/', page])
 
     def build_episodes_uri(self, show, page):
+        '''Constructs the request URI for episodes endpoint'''
         return ''.join([self.base_url, 'info/', show, '/', page])
 
     def build_sources_uri(self, episode):
+        '''Constructs the sources URI for sources endpoint'''
         return ''.join([self.base_url, 'episode/', episode])
 
     def get_movies(self, category, page):
-        logger.info('Fetching movies for %s, page %s', category, page)
+        '''Gets movies for a category'''
+        LOGGER.info('Fetching movies for %s, page %s', category, page)
         try:
             response = requests.get(
                 self.build_movies_uri(category, page),
@@ -99,17 +112,18 @@ class RSSClient:
 
             page_title = rss_data.feed.title
             entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
-            episodes, paginations = RSSClientUtil.extract_paginations(entries)
+            movies, paginations = RSSClientUtil.extract_paginations(entries)
 
-            return RSSResponse(page_title, episodes, paginations)
+            return RSSResponse(page_title, movies, paginations)
         except requests.exceptions.Timeout:
-            logger.error(
+            LOGGER.error(
                 'Request timed out fetching movies for %s, page %s',
                 category, page)
             raise ClientTimeoutError('Timeout fetching movies')
 
     def get_shows(self, category, page):
-        logger.info('Fetching shows for %s, page %s', category, page)
+        '''Gets shows for a category'''
+        LOGGER.info('Fetching shows for %s, page %s', category, page)
         try:
             response = requests.get(
                 self.build_shows_uri(category, page),
@@ -123,13 +137,14 @@ class RSSClient:
 
             return RSSResponse(page_title, episodes, paginations)
         except requests.exceptions.Timeout:
-            logger.error(
+            LOGGER.error(
                 'Request timed out fetching shows for %s, page %s',
                 category, page)
             raise ClientTimeoutError('Timeout fetching shows')
 
     def get_episodes(self, show, page):
-        logger.info('Fetching episodes for %s, page %s', show, page)
+        '''Gets episodes for a show'''
+        LOGGER.info('Fetching episodes for %s, page %s', show, page)
         try:
             response = requests.get(
                 self.build_episodes_uri(show, page),
@@ -143,13 +158,14 @@ class RSSClient:
 
             return RSSResponse(page_title, episodes, paginations)
         except requests.exceptions.Timeout:
-            logger.error(
+            LOGGER.error(
                 'Request timed out fetching episodes for %s, page %s',
                 show, page)
             raise ClientTimeoutError('Timeout fetching episodes')
 
     def get_sources(self, episode):
-        logger.info('Fetching sources for episode %s', episode)
+        '''Gets sources for an episode'''
+        LOGGER.info('Fetching sources for episode %s', episode)
         try:
             response = requests.get(
                 self.build_sources_uri(episode),
@@ -161,6 +177,6 @@ class RSSClient:
 
             return RSSResponse(page_title, entries)
         except requests.exceptions.Timeout:
-            logger.error(
+            LOGGER.error(
                 'Request timed out fetching sources for episode %s', episode)
             raise ClientTimeoutError('Timeout fetching sources')

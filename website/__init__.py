@@ -1,7 +1,11 @@
+'''
+This module contains the initialization logic for the flask application
+'''
 import os
 
 from logging.config import dictConfig
 from flask import Flask
+from . import core
 
 
 def create_app(test_config=None):
@@ -35,8 +39,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import core
-    app.logger.info('Registering blueprint %s', core.bp.name)
-    app.register_blueprint(core.bp)
+    app.logger.info('Registering blueprint %s', core.BP.name)
+    app.register_blueprint(core.BP)
 
     return app

@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{{ response.title() }}{% endblock %}</h1>
+  <h1>{% block title %}{{ response.title }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-  {% for show in response.items() %}
+  {% for show in response.items %}
     {% if loop.first %}
       <div class="row">
     {% elif loop.index0 % 4 == 0 %}
@@ -28,10 +28,10 @@
     {% endif %}
   {% endfor %}
   <br>
-  {% if response.paginations() is defined %}
+  {% if response.paginations is defined %}
     <nav aria-label="Shows display pages">
       <ul class="pagination justify-content-center">
-      {% for link in response.paginations() %}
+      {% for link in response.paginations %}
         <li class="page-item">
           <a class="page-link text-bigger"
              href="{{ url_for('core.shows', category=current_category, page=link.id) }}">
