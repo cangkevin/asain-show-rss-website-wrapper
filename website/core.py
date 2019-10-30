@@ -4,7 +4,7 @@ This module contains the core functionality of the application.
 from flask import (
     Blueprint, redirect, render_template, url_for
 )
-from .rss_client import RSSClient, ClientTimeoutError
+from .rss_client import RSSClient, ClientTimeoutError, InvalidResourceError
 from . import const
 
 CLIENT = RSSClient()
@@ -35,6 +35,11 @@ def movies(category, page):
             const.SERVER_ERROR_TEMPLATE,
             domains={'shows': CLIENT.show_categories,
                      'movies': CLIENT.movie_categories}), 500
+    except InvalidResourceError:
+        return render_template(
+            const.USER_ERROR_TEMPLATE,
+            domains={'shows': CLIENT.show_categories,
+                     'movies': CLIENT.movie_categories}), 404
 
 
 @BP.route('/shows/<category>/<page>')
@@ -53,6 +58,11 @@ def shows(category, page):
             const.SERVER_ERROR_TEMPLATE,
             domains={'shows': CLIENT.show_categories,
                      'movies': CLIENT.movie_categories}), 500
+    except InvalidResourceError:
+        return render_template(
+            const.USER_ERROR_TEMPLATE,
+            domains={'shows': CLIENT.show_categories,
+                     'movies': CLIENT.movie_categories}), 404
 
 
 @BP.route('/episodes/<show_id>/<page>')
@@ -71,6 +81,11 @@ def episodes(show_id, page):
             const.SERVER_ERROR_TEMPLATE,
             domains={'shows': CLIENT.show_categories,
                      'movies': CLIENT.movie_categories}), 500
+    except InvalidResourceError:
+        return render_template(
+            const.USER_ERROR_TEMPLATE,
+            domains={'shows': CLIENT.show_categories,
+                     'movies': CLIENT.movie_categories}), 404
 
 
 @BP.route('/sources/<episode_id>')
@@ -88,3 +103,8 @@ def sources(episode_id):
             const.SERVER_ERROR_TEMPLATE,
             domains={'shows': CLIENT.show_categories,
                      'movies': CLIENT.movie_categories}), 500
+    except InvalidResourceError:
+        return render_template(
+            const.USER_ERROR_TEMPLATE,
+            domains={'shows': CLIENT.show_categories,
+                     'movies': CLIENT.movie_categories}), 404

@@ -103,3 +103,52 @@ def test_get_sources_page_timeout(client, rss_client, mocked_response):
 
     assert response.data
     assert response.status_code == 500
+
+
+def test_get_nonexistent_movies_page(client, rss_client, mocked_response):
+    with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
+        mocked_response.add(
+            responses.GET,
+            rss_client.build_movies_uri('invalid-category', '1'),
+            body=resp, status=200
+        )
+        response = client.get('/movies/invalid-category/1')
+
+        assert response.data
+        assert response.status_code == 404
+
+
+def test_get_nonexistent_shows_page(client, rss_client, mocked_response):
+    with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
+        mocked_response.add(
+            responses.GET, rss_client.build_shows_uri('invalid-category', '1'),
+            body=resp, status=200
+        )
+        response = client.get('/shows/invalid-category/1')
+
+        assert response.data
+        assert response.status_code == 404
+
+
+def test_get_nonexistent_episodes_page(client, rss_client, mocked_response):
+    with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
+        mocked_response.add(
+            responses.GET, rss_client.build_episodes_uri('invalid-show', '1'),
+            body=resp, status=200
+        )
+        response = client.get('/episodes/invalid-show/1')
+
+        assert response.data
+        assert response.status_code == 404
+
+
+def test_get_nonexistent_sources_page(client, rss_client, mocked_response):
+    with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
+        mocked_response.add(
+           responses.GET, rss_client.build_sources_uri('invalid-ep'),
+           body=resp, status=200
+        )
+        response = client.get('/sources/invalid-ep')
+
+        assert response.data
+        assert response.status_code == 404
