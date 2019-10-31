@@ -56,18 +56,6 @@ def test_get_sources(rss_client, mocked_response):
         assert not rss_resp.paginations
 
 
-def test_lookup_page_title(rss_client):
-    lookup_valid_category = rss_client.lookup_page_title(
-        rss_client.show_categories, 'hk-drama', 'HK Shows'
-    )
-    lookup_invalid_category = rss_client.lookup_page_title(
-        rss_client.movie_categories, 'hk-drama', 'HK Movies'
-    )
-
-    assert lookup_valid_category == 'HK Dramas'
-    assert lookup_invalid_category == 'HK Movies'
-
-
 def test_get_movies_timed_out(rss_client, mocked_response):
     mocked_response.add(
         responses.GET, rss_client.build_movies_uri('hk-movies', '1'),

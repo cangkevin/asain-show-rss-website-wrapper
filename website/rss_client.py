@@ -82,12 +82,6 @@ class RSSClient:
         self.show_categories = const.SHOW_CATAGORIES
         self.movie_categories = const.MOVIE_CATAGORIES
 
-    def lookup_page_title(self, domain, category, resp_page_title):
-        for subcategory in domain.values():
-            if category in subcategory:
-                return subcategory[category]
-        return resp_page_title
-
     def build_movies_uri(self, category, page):
         '''Constructs the request URI for movies endpoint'''
         return ''.join([self.base_url, 'movies/', category, '/', page])
