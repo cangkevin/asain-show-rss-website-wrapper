@@ -10,6 +10,7 @@ pycodestyle = "*"
 pytest-cov = "*"
 responses = "*"
 coveralls = "*"
+commitizen = "*"
 
 [packages]
 requests = "*"
