@@ -21,6 +21,10 @@ class ClientTimeoutError(Exception):
     '''Custom exception class for timed out client requests'''
 
 
+class InvalidResourceError(Exception):
+    '''Custom exception class for invalid resources'''
+
+
 class RSSClientUtil:
     '''Class that assists with parsing responses from the RSS data source'''
     @staticmethod
@@ -120,6 +124,9 @@ class RSSClient:
                 'Request timed out fetching movies for %s, page %s',
                 category, page)
             raise ClientTimeoutError('Timeout fetching movies')
+        except AttributeError:
+            LOGGER.error('No movies found; invalid category: %s', category)
+            raise InvalidResourceError('No movies found')
 
     def get_shows(self, category, page):
         '''Gets shows for a category'''
@@ -141,6 +148,9 @@ class RSSClient:
                 'Request timed out fetching shows for %s, page %s',
                 category, page)
             raise ClientTimeoutError('Timeout fetching shows')
+        except AttributeError:
+            LOGGER.error('No shows found; invalid category: %s', category)
+            raise InvalidResourceError('No shows found')
 
     def get_episodes(self, show, page):
         '''Gets episodes for a show'''
@@ -162,6 +172,9 @@ class RSSClient:
                 'Request timed out fetching episodes for %s, page %s',
                 show, page)
             raise ClientTimeoutError('Timeout fetching episodes')
+        except AttributeError:
+            LOGGER.error('No episodes found; invalid show: %s', show)
+            raise InvalidResourceError('No episodes found')
 
     def get_sources(self, episode):
         '''Gets sources for an episode'''
@@ -180,3 +193,6 @@ class RSSClient:
             LOGGER.error(
                 'Request timed out fetching sources for episode %s', episode)
             raise ClientTimeoutError('Timeout fetching sources')
+        except AttributeError:
+            LOGGER.error('No sources found; invalid episode: %s', episode)
+            raise InvalidResourceError('No sources found')
