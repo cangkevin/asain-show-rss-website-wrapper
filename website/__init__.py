@@ -5,7 +5,6 @@ import os
 
 from logging.config import dictConfig
 from flask import Flask
-from . import core
 
 
 def create_app(test_config=None):
@@ -39,7 +38,8 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    app.logger.info('Registering blueprint %s', core.BP.name)
-    app.register_blueprint(core.BP)
+    from . import api
+    app.logger.info('Registering blueprint %s', api.BP.name)
+    app.register_blueprint(api.BP)
 
     return app

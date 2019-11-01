@@ -98,95 +98,81 @@ class RSSClient:
         '''Constructs the sources URI for sources endpoint'''
         return ''.join([self.base_url, 'episode/', episode])
 
+    def handle_exceptions(resource):
+        '''Decorator to provide common error handling'''
+        def exception_handler_wrapper(func):
+            def wrapper(*args, **kwargs):
+                try:
+                    return func(*args, **kwargs)
+                except requests.exceptions.Timeout:
+                    LOGGER.error(
+                        'Request timed out fetching %s for %s',
+                        resource, args[1])
+                    raise ClientTimeoutError('Timeout fetching ' + resource)
+                except AttributeError:
+                    LOGGER.error('No %s found for %s', resource, args[1])
+                    raise InvalidResourceError(resource + ' not found')
+            return wrapper
+        return exception_handler_wrapper
+
+    @handle_exceptions('movies')
     def get_movies(self, category, page):
         '''Gets movies for a category'''
         LOGGER.info('Fetching movies for %s, page %s', category, page)
-        try:
-            response = requests.get(
-                self.build_movies_uri(category, page),
-                timeout=(6.05, 9)
-            )
-            rss_data = feedparser.parse(response.content)
+        response = requests.get(
+            self.build_movies_uri(category, page),
+            timeout=(6.05, 9)
+        )
+        rss_data = feedparser.parse(response.content)
 
-            page_title = rss_data.feed.title
-            entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
-            movies, paginations = RSSClientUtil.extract_paginations(entries)
+        page_title = rss_data.feed.title
+        entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
+        movies, paginations = RSSClientUtil.extract_paginations(entries)
 
-            return RSSResponse(page_title, movies, paginations)
-        except requests.exceptions.Timeout:
-            LOGGER.error(
-                'Request timed out fetching movies for %s, page %s',
-                category, page)
-            raise ClientTimeoutError('Timeout fetching movies')
-        except AttributeError:
-            LOGGER.error('No movies found; invalid category: %s', category)
-            raise InvalidResourceError('No movies found')
+        return RSSResponse(page_title, movies, paginations)
 
+    @handle_exceptions('shows')
     def get_shows(self, category, page):
         '''Gets shows for a category'''
         LOGGER.info('Fetching shows for %s, page %s', category, page)
-        try:
-            response = requests.get(
-                self.build_shows_uri(category, page),
-                timeout=(6.05, 9)
-            )
-            rss_data = feedparser.parse(response.content)
+        response = requests.get(
+            self.build_shows_uri(category, page),
+            timeout=(6.05, 9)
+        )
+        rss_data = feedparser.parse(response.content)
 
-            page_title = rss_data.feed.title
-            entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
-            episodes, paginations = RSSClientUtil.extract_paginations(entries)
+        page_title = rss_data.feed.title
+        entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
+        episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
-            return RSSResponse(page_title, episodes, paginations)
-        except requests.exceptions.Timeout:
-            LOGGER.error(
-                'Request timed out fetching shows for %s, page %s',
-                category, page)
-            raise ClientTimeoutError('Timeout fetching shows')
-        except AttributeError:
-            LOGGER.error('No shows found; invalid category: %s', category)
-            raise InvalidResourceError('No shows found')
+        return RSSResponse(page_title, episodes, paginations)
 
+    @handle_exceptions('episodes')
     def get_episodes(self, show, page):
         '''Gets episodes for a show'''
         LOGGER.info('Fetching episodes for %s, page %s', show, page)
-        try:
-            response = requests.get(
-                self.build_episodes_uri(show, page),
-                timeout=(6.05, 9)
-            )
-            rss_data = feedparser.parse(response.content)
+        response = requests.get(
+            self.build_episodes_uri(show, page),
+            timeout=(6.05, 9)
+        )
+        rss_data = feedparser.parse(response.content)
 
-            page_title = rss_data.feed.title
-            entries = RSSClientUtil.extract_episodes(rss_data)
-            episodes, paginations = RSSClientUtil.extract_paginations(entries)
+        page_title = rss_data.feed.title
+        entries = RSSClientUtil.extract_episodes(rss_data)
+        episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
-            return RSSResponse(page_title, episodes, paginations)
-        except requests.exceptions.Timeout:
-            LOGGER.error(
-                'Request timed out fetching episodes for %s, page %s',
-                show, page)
-            raise ClientTimeoutError('Timeout fetching episodes')
-        except AttributeError:
-            LOGGER.error('No episodes found; invalid show: %s', show)
-            raise InvalidResourceError('No episodes found')
+        return RSSResponse(page_title, episodes, paginations)
 
+    @handle_exceptions('sources')
     def get_sources(self, episode):
         '''Gets sources for an episode'''
         LOGGER.info('Fetching sources for episode %s', episode)
-        try:
-            response = requests.get(
-                self.build_sources_uri(episode),
-                timeout=(6.05, 9)
-            )
-            rss_data = feedparser.parse(response.content)
-            page_title = rss_data.feed.title
-            entries = RSSClientUtil.extract_sources(rss_data)
+        response = requests.get(
+            self.build_sources_uri(episode),
+            timeout=(6.05, 9)
+        )
+        rss_data = feedparser.parse(response.content)
+        page_title = rss_data.feed.title
+        entries = RSSClientUtil.extract_sources(rss_data)
 
-            return RSSResponse(page_title, entries)
-        except requests.exceptions.Timeout:
-            LOGGER.error(
-                'Request timed out fetching sources for episode %s', episode)
-            raise ClientTimeoutError('Timeout fetching sources')
-        except AttributeError:
-            LOGGER.error('No sources found; invalid episode: %s', episode)
-            raise InvalidResourceError('No sources found')
+        return RSSResponse(page_title, entries)
