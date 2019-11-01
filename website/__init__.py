@@ -38,8 +38,8 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import core
-    app.logger.info('Registering blueprint %s', core.BP.name)
-    app.register_blueprint(core.BP)
+    from . import api
+    app.logger.info('Registering blueprint %s', api.BP.name)
+    app.register_blueprint(api.BP)
 
     return app
