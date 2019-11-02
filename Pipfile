@@ -17,6 +17,7 @@ requests = "*"
 flask = "*"
 "beautifulsoup4" = "*"
 feedparser = "*"
+htmlmin = "*"
 
 [requires]
 python_version = "3.6"

@@ -5,6 +5,7 @@ from functools import wraps
 from flask import (
     Blueprint, redirect, render_template, url_for
 )
+from htmlmin.main import minify
 from .rss_client import ClientTimeoutError, InvalidResourceError
 from . import core
 from . import const
@@ -25,6 +26,13 @@ def templated(template, http_code=200):
             return render_template(template, **ctx), http_code
         return decorated_function
     return decorator
+
+
+@BP.after_request
+def minify_response(response):
+    '''Minify html response'''
+    response.set_data(minify(response.get_data(as_text=True)))
+    return response
 
 
 @BP.errorhandler(ClientTimeoutError)
