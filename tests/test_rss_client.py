@@ -52,7 +52,7 @@ def test_get_sources(rss_client, mocked_response):
         rss_resp = rss_client.get_sources('99999')
 
         assert rss_resp.title == 'Episode 22'
-        assert len(rss_resp.items) == 3
+        assert len(rss_resp.items) == 2
         assert not rss_resp.paginations
 
 
