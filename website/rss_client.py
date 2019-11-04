@@ -5,6 +5,7 @@ import os
 import re
 
 from urllib.parse import urlsplit
+from more_itertools import unique_everseen
 
 import logging
 import requests
@@ -67,9 +68,11 @@ class RSSClientUtil:
 
     @staticmethod
     def extract_sources(data):
-        return [{'title': entry.title,
-                 'url': entry.links[0].href}
-                for entry in data.entries]
+        sources = [{'title': entry.title,
+                    'url': entry.links[0].href}
+                   for entry in data.entries]
+        return list(unique_everseen(
+            sources, key=lambda e: '{url}'.format(**e)))
 
 
 class RSSClient:
