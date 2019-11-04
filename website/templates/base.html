@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/custom.css') }}">
     <script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.0.0.min.js') }}" defer></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/bootstrap.min.js') }}" defer></script>
+    {% block scripts %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body class="h-100">

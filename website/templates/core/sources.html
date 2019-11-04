@@ -1,19 +1,35 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/video-player.js') }}" defer></script>
+{% endblock %}
+
+{% block title %}
+  {{ response.title }}
+{% endblock %}
+
 {% block header %}
 	<h1>{{ response.title }}</h1>
 {% endblock %}
 
 {% block content %}
-  <ul class="list-group list-group-flush">
-  {% for source in response.items %}
-    <li>
-      <a href="{{ source.url }}"
-         class="text-bigger"
-         style="color:black;">
-       {{ source.title }}
-      </a>
-    </li>
-  {% endfor %}
-  </ul>
+  <div id="player">
+    <div id="video-player">
+      <iframe v-bind:src="selected"
+              v-bind:height="height"
+              width="100%"
+              allowfullscreen></iframe>
+    </div>
+
+    {% for source in response.items %}
+      <button type="button" 
+              class="btn" 
+              v-bind:class="{'btn-primary': selected == '{{ source.url }}'}" 
+              v-on:click="render" 
+              data-source="{{ source.url }}">
+        {{ source.title }}     
+      </button>
+    {% endfor %}
+  </div>
 {% endblock %}
