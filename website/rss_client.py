@@ -5,6 +5,7 @@ import os
 import re
 
 from urllib.parse import urlsplit
+from more_itertools import unique_everseen
 
 import logging
 import requests
@@ -67,9 +68,11 @@ class RSSClientUtil:
 
     @staticmethod
     def extract_sources(data):
-        return [{'title': entry.title,
-                 'url': entry.links[0].href}
-                for entry in data.entries]
+        sources = [{'title': entry.title,
+                    'url': entry.links[0].href}
+                   for entry in data.entries]
+        return list(unique_everseen(
+            sources, key=lambda e: '{url}'.format(**e)))
 
 
 class RSSClient:
@@ -121,7 +124,7 @@ class RSSClient:
         LOGGER.info('Fetching movies for %s, page %s', category, page)
         response = requests.get(
             self.build_movies_uri(category, page),
-            timeout=(6.05, 9)
+            timeout=(9.05, 9)
         )
         rss_data = feedparser.parse(response.content)
 
@@ -137,7 +140,7 @@ class RSSClient:
         LOGGER.info('Fetching shows for %s, page %s', category, page)
         response = requests.get(
             self.build_shows_uri(category, page),
-            timeout=(6.05, 9)
+            timeout=(9.05, 9)
         )
         rss_data = feedparser.parse(response.content)
 
@@ -153,7 +156,7 @@ class RSSClient:
         LOGGER.info('Fetching episodes for %s, page %s', show, page)
         response = requests.get(
             self.build_episodes_uri(show, page),
-            timeout=(6.05, 9)
+            timeout=(9.05, 9)
         )
         rss_data = feedparser.parse(response.content)
 
@@ -169,7 +172,7 @@ class RSSClient:
         LOGGER.info('Fetching sources for episode %s', episode)
         response = requests.get(
             self.build_sources_uri(episode),
-            timeout=(6.05, 9)
+            timeout=(9.05, 9)
         )
         rss_data = feedparser.parse(response.content)
         page_title = rss_data.feed.title

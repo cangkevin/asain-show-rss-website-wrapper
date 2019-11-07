@@ -5,3 +5,17 @@
 .text-bigger {
     font-size: 125%;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1 0 auto;
+}
+
+.footer {
+    flex-shrink: 0;
+    background-color: #f5f5f5;
+}
