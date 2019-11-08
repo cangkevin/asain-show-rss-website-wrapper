@@ -71,8 +71,12 @@ class RSSClientUtil:
         sources = [{'title': entry.title,
                     'url': entry.links[0].href}
                    for entry in data.entries]
-        return list(unique_everseen(
-            sources, key=lambda e: '{url}'.format(**e)))
+        return sorted(
+                  list(
+                      unique_everseen(
+                          sources, key=lambda e: '{url}'.format(**e)
+                      )
+                  ), key=lambda e: e['title'])
 
 
 class RSSClient:
