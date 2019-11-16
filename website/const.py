@@ -23,7 +23,9 @@ DRAMA_SHOWS = {
     'hk-drama': 'HK Dramas',
     'c-drama': 'Chinese Dramas (English sub)',
     'c-drama-can-dub': 'Chinese Dramas (Cantonese dub)',
-    'k-drama': 'Korean Dramas (English sub)'
+    'k-drama': 'Korean Dramas (English sub)',
+    'tw-drama': 'Taiwanese Dramas (English sub)',
+    'tw-drama-can-dub': 'Taiwanese Dramas (Cantonese dub)'
 }
 
 VARIETY_SHOWS = {

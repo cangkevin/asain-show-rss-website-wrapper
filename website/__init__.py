@@ -2,7 +2,6 @@
 This module contains the initialization logic for the flask application
 '''
 import os
-import logging
 
 from logging.config import dictConfig
 from flask import Flask
