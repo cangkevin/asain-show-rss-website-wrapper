@@ -1,7 +1,9 @@
 language: python
 os: linux
 
-script: py.test --cov=website tests/
+script:
+  - py.test --cov=website tests/
+  - flake8 .
 
 install: pipenv install --dev
 

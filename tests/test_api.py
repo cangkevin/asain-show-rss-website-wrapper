@@ -10,7 +10,8 @@ from website import const
 def test_landing_page_should_redirect(client):
     response = client.get('/')
     assert response.status_code == 302
-    assert urlparse(response.location).path == '/shows/recently-added-can-dub/1'
+    assert urlparse(response.location).path == \
+        '/shows/recently-added-can-dub/1'
 
 
 def test_get_movies_page(client, rss_client, mocked_response):
