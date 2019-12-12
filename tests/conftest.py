@@ -8,6 +8,7 @@ from website.rss_client import RSSClient
 @pytest.fixture
 def app():
     app = create_app({'TESTING': True})
+    app.app_context().push()
     yield app
 
 
