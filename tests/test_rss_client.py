@@ -4,12 +4,15 @@ import pytest
 import requests
 import responses
 
-from website import const
+from website.const import (
+    MOVIES_RESP_FILE, SHOWS_RESP_FILE, EPISODES_RESP_FILE,
+    SOURCES_RESP_FILE, EMPTY_RESP_FILE
+)
 from website.rss_client import ClientTimeoutError, InvalidResourceError
 
 
 def test_get_movies(rss_client, mocked_response):
-    with open(Path(const.MOVIES_RESP_FILE), 'rb') as resp:
+    with open(Path(MOVIES_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_movies_uri('hk-movies', '1'),
             body=resp, status=200)
@@ -21,7 +24,7 @@ def test_get_movies(rss_client, mocked_response):
 
 
 def test_get_shows(rss_client, mocked_response):
-    with open(Path(const.SHOWS_RESP_FILE), 'rb') as resp:
+    with open(Path(SHOWS_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_shows_uri('hk-drama', '1'),
             body=resp, status=200)
@@ -33,7 +36,7 @@ def test_get_shows(rss_client, mocked_response):
 
 
 def test_get_episodes(rss_client, mocked_response):
-    with open(Path(const.EPISODES_RESP_FILE), 'rb') as resp:
+    with open(Path(EPISODES_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_episodes_uri('12345', '1'),
             body=resp, status=200)
@@ -45,7 +48,7 @@ def test_get_episodes(rss_client, mocked_response):
 
 
 def test_get_sources(rss_client, mocked_response):
-    with open(Path(const.SOURCES_RESP_FILE), 'rb') as resp:
+    with open(Path(SOURCES_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_sources_uri('99999'),
             body=resp, status=200)
@@ -97,7 +100,7 @@ def test_get_sources_timed_out(rss_client, mocked_response):
 
 
 def test_get_invalid_movie(rss_client, mocked_response):
-    with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
+    with open(Path(EMPTY_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_movies_uri('invalid-movie', '1'),
             body=resp, status=200
@@ -108,7 +111,7 @@ def test_get_invalid_movie(rss_client, mocked_response):
 
 
 def test_get_invalid_show(rss_client, mocked_response):
-    with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
+    with open(Path(EMPTY_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_shows_uri('invalid-show', '1'),
             body=resp, status=200
@@ -119,7 +122,7 @@ def test_get_invalid_show(rss_client, mocked_response):
 
 
 def test_get_invalid_episode(rss_client, mocked_response):
-    with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
+    with open(Path(EMPTY_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_episodes_uri('invalid-ep', '1'),
             body=resp, status=200
@@ -130,11 +133,55 @@ def test_get_invalid_episode(rss_client, mocked_response):
 
 
 def test_get_invalid_sources(rss_client, mocked_response):
-    with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
+    with open(Path(EMPTY_RESP_FILE), 'rb') as resp:
         mocked_response.add(
             responses.GET, rss_client.build_sources_uri('invalid-source'),
             body=resp, status=200
         )
 
         with pytest.raises(InvalidResourceError):
+            rss_client.get_sources('invalid-source')
+
+
+def test_get_invalid_movie_with_5xx(rss_client, mocked_response):
+    with open(Path(EMPTY_RESP_FILE), 'rb') as resp:
+        mocked_response.add(
+            responses.GET, rss_client.build_movies_uri('invalid-movie', '1'),
+            body=resp, status=500
+        )
+
+        with pytest.raises(ClientTimeoutError):
+            rss_client.get_movies('invalid-movie', '1')
+
+
+def test_get_invalid_show_with_5xx(rss_client, mocked_response):
+    with open(Path(EMPTY_RESP_FILE), 'rb') as resp:
+        mocked_response.add(
+            responses.GET, rss_client.build_shows_uri('invalid-show', '1'),
+            body=resp, status=500
+        )
+
+        with pytest.raises(ClientTimeoutError):
+            rss_client.get_shows('invalid-show', '1')
+
+
+def test_get_invalid_episode_with_5xx(rss_client, mocked_response):
+    with open(Path(EMPTY_RESP_FILE), 'rb') as resp:
+        mocked_response.add(
+            responses.GET, rss_client.build_episodes_uri('invalid-ep', '1'),
+            body=resp, status=500
+        )
+
+        with pytest.raises(ClientTimeoutError):
+            rss_client.get_episodes('invalid-ep', '1')
+
+
+def test_get_invalid_sources_with_5xx(rss_client, mocked_response):
+    with open(Path(EMPTY_RESP_FILE), 'rb') as resp:
+        mocked_response.add(
+            responses.GET, rss_client.build_sources_uri('invalid-source'),
+            body=resp, status=500
+        )
+
+        with pytest.raises(ClientTimeoutError):
             rss_client.get_sources('invalid-source')
