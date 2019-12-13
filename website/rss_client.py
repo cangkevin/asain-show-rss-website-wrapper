@@ -4,18 +4,15 @@ This module handles a client that interacts with the backend data source
 import os
 import re
 
+from flask import current_app
 from urllib.parse import urlsplit
 from more_itertools import unique_everseen
 
-import logging
 import requests
 import feedparser
 
 from bs4 import BeautifulSoup
 from .models import RSSResponse
-from . import const
-
-LOGGER = logging.getLogger(__name__)
 
 
 class ClientTimeoutError(Exception):
@@ -72,11 +69,11 @@ class RSSClientUtil:
                     'url': entry.links[0].href}
                    for entry in data.entries]
         return sorted(
-                  list(
-                      unique_everseen(
-                          sources, key=lambda e: '{url}'.format(**e)
-                      )
-                  ), key=lambda e: e['title'])
+            list(
+                unique_everseen(
+                    sources,
+                    key=lambda e: '{url}'.format(**e))
+            ), key=lambda e: e['title'])
 
 
 class RSSClient:
@@ -86,8 +83,6 @@ class RSSClient:
     '''
     def __init__(self):
         self.base_url = os.environ.get('BASE_URL')
-        self.show_categories = const.SHOW_CATAGORIES
-        self.movie_categories = const.MOVIE_CATAGORIES
 
     def build_movies_uri(self, category, page):
         '''Constructs the request URI for movies endpoint'''
@@ -112,12 +107,13 @@ class RSSClient:
                 try:
                     return func(*args, **kwargs)
                 except requests.exceptions.Timeout:
-                    LOGGER.error(
+                    current_app.logger.error(
                         'Request timed out fetching %s for %s',
                         resource, args[1])
                     raise ClientTimeoutError('Timeout fetching ' + resource)
                 except AttributeError:
-                    LOGGER.error('No %s found for %s', resource, args[1])
+                    current_app.logger.error(
+                        'No %s found for %s', resource, args[1])
                     raise InvalidResourceError(resource + ' not found')
             return wrapper
         return exception_handler_wrapper
@@ -125,11 +121,16 @@ class RSSClient:
     @handle_exceptions('movies')
     def get_movies(self, category, page):
         '''Gets movies for a category'''
-        LOGGER.info('Fetching movies for %s, page %s', category, page)
+        current_app.logger.info(
+            'Fetching movies for %s, page %s', category, page)
         response = requests.get(
             self.build_movies_uri(category, page),
             timeout=(9.05, 9)
         )
+
+        if response.status_code >= 500:
+            raise ClientTimeoutError('Unable to handle request')
+
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
@@ -141,11 +142,16 @@ class RSSClient:
     @handle_exceptions('shows')
     def get_shows(self, category, page):
         '''Gets shows for a category'''
-        LOGGER.info('Fetching shows for %s, page %s', category, page)
+        current_app.logger.info(
+            'Fetching shows for %s, page %s', category, page)
         response = requests.get(
             self.build_shows_uri(category, page),
             timeout=(9.05, 9)
         )
+
+        if response.status_code >= 500:
+            raise ClientTimeoutError('Unable to handle request')
+
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
@@ -157,11 +163,16 @@ class RSSClient:
     @handle_exceptions('episodes')
     def get_episodes(self, show, page):
         '''Gets episodes for a show'''
-        LOGGER.info('Fetching episodes for %s, page %s', show, page)
+        current_app.logger.info(
+            'Fetching episodes for %s, page %s', show, page)
         response = requests.get(
             self.build_episodes_uri(show, page),
             timeout=(9.05, 9)
         )
+
+        if response.status_code >= 500:
+            raise ClientTimeoutError('Unable to handle request')
+
         rss_data = feedparser.parse(response.content)
 
         page_title = rss_data.feed.title
@@ -173,11 +184,15 @@ class RSSClient:
     @handle_exceptions('sources')
     def get_sources(self, episode):
         '''Gets sources for an episode'''
-        LOGGER.info('Fetching sources for episode %s', episode)
+        current_app.logger.info('Fetching sources for episode %s', episode)
         response = requests.get(
             self.build_sources_uri(episode),
             timeout=(9.05, 9)
         )
+
+        if response.status_code >= 500:
+            raise ClientTimeoutError('Unable to handle request')
+
         rss_data = feedparser.parse(response.content)
         page_title = rss_data.feed.title
         entries = RSSClientUtil.extract_sources(rss_data)

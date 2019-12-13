@@ -1,29 +1,35 @@
 '''
 This module contains the initialization logic for the flask application
 '''
+from logging.config import dictConfig
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
+
 import os
 
-from logging.config import dictConfig
 from flask import Flask
+from website.rss_client import RSSClient
 
+rss_client = RSSClient()
+
+from website.core import bp as cores_bp
+from website.errors import bp as errors_bp
 
 def create_app(test_config=None):
-    dictConfig({
-        'version': 1,
-        'formatters': {'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-        }},
-        'handlers': {'wsgi': {
-            'class': 'logging.StreamHandler',
-            'stream': 'ext://flask.logging.wsgi_errors_stream',
-            'formatter': 'default'
-        }},
-        'root': {
-            'level': 'INFO',
-            'handlers': ['wsgi']
-        }
-    })
-
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev'
@@ -38,8 +44,9 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import api
-    app.logger.info('Registering blueprint %s', api.BP.name)
-    app.register_blueprint(api.BP)
+    app.logger.info('Registering blueprint %s', cores_bp.name)
+    app.register_blueprint(cores_bp)
+    app.logger.info('Registering blueprint %s', errors_bp.name)
+    app.register_blueprint(errors_bp)
 
     return app

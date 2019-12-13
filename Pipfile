@@ -4,13 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [dev-packages]
-pylint = "*"
 pytest = "*"
-pycodestyle = "*"
 pytest-cov = "*"
 responses = "*"
 coveralls = "*"
 commitizen = "*"
+flake8 = "*"
 
 [packages]
 requests = "*"

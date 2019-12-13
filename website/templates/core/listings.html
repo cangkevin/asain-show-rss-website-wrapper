@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{ response.title }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    {% for show in response.items %} 
+      <div class="col-8 offset-2 col-md-3 offset-md-0">
+        <div class="row">
+          <div class="col-12 mt-2 mb-1">
+            <a href="{{ url_for('core.episodes', show_id=show.id, page=1) }}" style="color:black;">
+              <img src="{{ show.picture }}" class="img-fluid w-100 img-thumbnail">
+            </a>
+          </div>
+          <div class="col mb-4 text-center font-weight-bold text-bigger">
+            <a href="{{ url_for('core.episodes', show_id=show.id, page=1) }}" style="color:black;">
+              {{ show.title }}
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <br>
+  {% if response.paginations is defined %}
+    <nav aria-label="Shows display pages">
+      <ul class="pagination justify-content-center">
+      {% for link in response.paginations %}
+        <li class="page-item">
+          <a class="page-link text-bigger"
+             href="{{ url_for('core.'+request.path.split('/')[1], category=current_category, page=link.id) }}">
+            {{ link.title }}
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+{% endblock %}

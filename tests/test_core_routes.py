@@ -10,7 +10,8 @@ from website import const
 def test_landing_page_should_redirect(client):
     response = client.get('/')
     assert response.status_code == 302
-    assert urlparse(response.location).path == '/shows/recently-added-can-dub/1'
+    assert urlparse(response.location).path == \
+        '/shows/recently-added-can-dub/1'
 
 
 def test_get_movies_page(client, rss_client, mocked_response):
@@ -145,8 +146,8 @@ def test_get_nonexistent_episodes_page(client, rss_client, mocked_response):
 def test_get_nonexistent_sources_page(client, rss_client, mocked_response):
     with open(Path(const.EMPTY_RESP_FILE), 'rb') as resp:
         mocked_response.add(
-           responses.GET, rss_client.build_sources_uri('invalid-ep'),
-           body=resp, status=200
+            responses.GET, rss_client.build_sources_uri('invalid-ep'),
+            body=resp, status=200
         )
         response = client.get('/sources/invalid-ep')
 

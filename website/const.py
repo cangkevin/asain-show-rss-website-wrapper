@@ -11,8 +11,7 @@ SOURCES_RESP_FILE = 'tests/data/sources_response.txt'
 EMPTY_RESP_FILE = 'tests/data/empty_response.txt'
 
 # template paths
-MOVIES_TEMPLATE = 'core/movies.html'
-SHOWS_TEMPLATE = 'core/shows.html'
+LISTINGS_TEMPLATE = 'core/listings.html'
 EPISODES_TEMPLATE = 'core/episodes.html'
 SOURCES_TEMPLATE = 'core/sources.html'
 USER_ERROR_TEMPLATE = '404.html'
@@ -53,4 +52,9 @@ MOVIES = {
 # encompass all subcategories of movies
 MOVIE_CATAGORIES = {
     'Movies': MOVIES
+}
+
+DOMAINS = {
+    'shows': SHOW_CATAGORIES,
+    'movies': MOVIE_CATAGORIES
 }
