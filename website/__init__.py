@@ -22,16 +22,12 @@ dictConfig({
 import os
 
 from flask import Flask
-from website.const import SHOW_CATAGORIES, MOVIE_CATAGORIES
 from website.rss_client import RSSClient
 
 rss_client = RSSClient()
-DOMAINS = {'shows': SHOW_CATAGORIES,
-           'movies': MOVIE_CATAGORIES}
 
 from website.core import bp as cores_bp
 from website.errors import bp as errors_bp
-
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)

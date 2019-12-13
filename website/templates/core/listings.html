@@ -31,7 +31,7 @@
       {% for link in response.paginations %}
         <li class="page-item">
           <a class="page-link text-bigger"
-             href="{{ url_for('core.shows', category=current_category, page=link.id) }}">
+             href="{{ url_for('core.'+request.path.split('/')[1], category=current_category, page=link.id) }}">
             {{ link.title }}
           </a>
         </li>
