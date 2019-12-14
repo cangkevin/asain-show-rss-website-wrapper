@@ -3,16 +3,15 @@ This module handles a client that interacts with the backend data source
 '''
 import os
 import re
+import requests
+import feedparser
 
 from flask import current_app
 from urllib.parse import urlsplit
 from more_itertools import unique_everseen
-
-import requests
-import feedparser
-
 from bs4 import BeautifulSoup
-from .models import RSSResponse
+
+from website.models import RssResponse
 
 
 class ClientTimeoutError(Exception):
@@ -137,7 +136,7 @@ class RSSClient:
         entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
         movies, paginations = RSSClientUtil.extract_paginations(entries)
 
-        return RSSResponse(page_title, movies, paginations)
+        return RssResponse(page_title, movies, paginations)
 
     @handle_exceptions('shows')
     def get_shows(self, category, page):
@@ -158,7 +157,7 @@ class RSSClient:
         entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
         episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
-        return RSSResponse(page_title, episodes, paginations)
+        return RssResponse(page_title, episodes, paginations)
 
     @handle_exceptions('episodes')
     def get_episodes(self, show, page):
@@ -179,7 +178,7 @@ class RSSClient:
         entries = RSSClientUtil.extract_episodes(rss_data)
         episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
-        return RSSResponse(page_title, episodes, paginations)
+        return RssResponse(page_title, episodes, paginations)
 
     @handle_exceptions('sources')
     def get_sources(self, episode):
@@ -197,4 +196,4 @@ class RSSClient:
         page_title = rss_data.feed.title
         entries = RSSClientUtil.extract_sources(rss_data)
 
-        return RSSResponse(page_title, entries)
+        return RssResponse(page_title, entries, None)
