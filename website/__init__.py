@@ -22,11 +22,7 @@ dictConfig({
 import os
 
 from flask import Flask
-from website.rss_client import RSSClient
-
-rss_client = RSSClient()
-
-from website.core import bp as cores_bp
+from website.core import bp as core_bp
 from website.errors import bp as errors_bp
 
 def create_app(test_config=None):
@@ -44,8 +40,8 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    app.logger.info('Registering blueprint %s', cores_bp.name)
-    app.register_blueprint(cores_bp)
+    app.logger.info('Registering blueprint %s', core_bp.name)
+    app.register_blueprint(core_bp)
     app.logger.info('Registering blueprint %s', errors_bp.name)
     app.register_blueprint(errors_bp)
 

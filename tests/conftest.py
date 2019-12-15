@@ -2,7 +2,11 @@ import pytest
 import responses
 
 from website import create_app
-from website.rss_client import RSSClient
+
+
+@pytest.fixture(autouse=True)
+def mock_base_url(monkeypatch):
+    monkeypatch.setenv('BASE_URL', 'http://base_url/')
 
 
 @pytest.fixture
@@ -20,11 +24,6 @@ def client(app):
 @pytest.fixture
 def runner(app):
     return app.test_cli_runner()
-
-
-@pytest.fixture
-def rss_client():
-    return RSSClient()
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 from flask import render_template
-from website.errors import bp
 
-from website.rss_client import InvalidResourceError, ClientTimeoutError
+from website.errors import bp
+from website.client.exceptions import InvalidResourceError, ClientTimeoutError
 from website.const import USER_ERROR_TEMPLATE, SERVER_ERROR_TEMPLATE
 
 
