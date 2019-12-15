@@ -75,125 +75,125 @@ class RSSClientUtil:
             ), key=lambda e: e['title'])
 
 
-class RSSClient:
-    '''
-    Class that serves as a client to communicate with the backend
-    RSS data source
-    '''
-    def __init__(self):
-        self.base_url = os.environ.get('BASE_URL')
+def build_movies_uri(category, page):
+    '''Constructs the request URI for movies endpoint'''
+    return ''.join([os.getenv('BASE_URL'), 'movies/', category, '/', page])
 
-    def build_movies_uri(self, category, page):
-        '''Constructs the request URI for movies endpoint'''
-        return ''.join([self.base_url, 'movies/', category, '/', page])
 
-    def build_shows_uri(self, category, page):
-        '''Constructs the request URI for shows endpoint'''
-        return ''.join([self.base_url, 'category/', category, '/', page])
+def build_shows_uri(category, page):
+    '''Constructs the request URI for shows endpoint'''
+    return ''.join([os.getenv('BASE_URL'), 'category/', category, '/', page])
 
-    def build_episodes_uri(self, show, page):
-        '''Constructs the request URI for episodes endpoint'''
-        return ''.join([self.base_url, 'info/', show, '/', page])
 
-    def build_sources_uri(self, episode):
-        '''Constructs the sources URI for sources endpoint'''
-        return ''.join([self.base_url, 'episode/', episode])
+def build_episodes_uri(show, page):
+    '''Constructs the request URI for episodes endpoint'''
+    return ''.join([os.getenv('BASE_URL'), 'info/', show, '/', page])
 
-    def handle_exceptions(resource):
-        '''Decorator to provide common error handling'''
-        def exception_handler_wrapper(func):
-            def wrapper(*args, **kwargs):
-                try:
-                    return func(*args, **kwargs)
-                except requests.exceptions.Timeout:
-                    current_app.logger.error(
-                        'Request timed out fetching %s for %s',
-                        resource, args[1])
-                    raise ClientTimeoutError('Timeout fetching ' + resource)
-                except AttributeError:
-                    current_app.logger.error(
-                        'No %s found for %s', resource, args[1])
-                    raise InvalidResourceError(resource + ' not found')
-            return wrapper
-        return exception_handler_wrapper
 
-    @handle_exceptions('movies')
-    def get_movies(self, category, page):
-        '''Gets movies for a category'''
-        current_app.logger.info(
-            'Fetching movies for %s, page %s', category, page)
-        response = requests.get(
-            self.build_movies_uri(category, page),
-            timeout=(9.05, 9)
-        )
+def build_sources_uri(episode):
+    '''Constructs the sources URI for sources endpoint'''
+    return ''.join([os.getenv('BASE_URL'), 'episode/', episode])
 
-        if response.status_code >= 500:
-            raise ClientTimeoutError('Unable to handle request')
 
-        rss_data = feedparser.parse(response.content)
+def handle_exceptions(resource):
+    '''Decorator to provide common error handling'''
+    def exception_handler_wrapper(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except requests.exceptions.Timeout:
+                current_app.logger.error(
+                    'Request timed out fetching %s for %s',
+                    resource, args[0])
+                raise ClientTimeoutError('Timeout fetching ' + resource)
+            except AttributeError:
+                current_app.logger.error(
+                    'No %s found for %s', resource, args[0])
+                raise InvalidResourceError(resource + ' not found')
+        return wrapper
+    return exception_handler_wrapper
 
-        page_title = rss_data.feed.title
-        entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
-        movies, paginations = RSSClientUtil.extract_paginations(entries)
 
-        return RssResponse(page_title, movies, paginations)
+@handle_exceptions('movies')
+def get_movies(category, page):
+    '''Gets movies for a category'''
+    current_app.logger.info(
+        'Fetching movies for %s, page %s', category, page)
+    response = requests.get(
+        build_movies_uri(category, page),
+        timeout=(9.05, 9)
+    )
 
-    @handle_exceptions('shows')
-    def get_shows(self, category, page):
-        '''Gets shows for a category'''
-        current_app.logger.info(
-            'Fetching shows for %s, page %s', category, page)
-        response = requests.get(
-            self.build_shows_uri(category, page),
-            timeout=(9.05, 9)
-        )
+    if response.status_code >= 500:
+        raise ClientTimeoutError('Unable to handle request')
 
-        if response.status_code >= 500:
-            raise ClientTimeoutError('Unable to handle request')
+    rss_data = feedparser.parse(response.content)
 
-        rss_data = feedparser.parse(response.content)
+    page_title = rss_data.feed.title
+    entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
+    movies, paginations = RSSClientUtil.extract_paginations(entries)
 
-        page_title = rss_data.feed.title
-        entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
-        episodes, paginations = RSSClientUtil.extract_paginations(entries)
+    return RssResponse(page_title, movies, paginations)
 
-        return RssResponse(page_title, episodes, paginations)
 
-    @handle_exceptions('episodes')
-    def get_episodes(self, show, page):
-        '''Gets episodes for a show'''
-        current_app.logger.info(
-            'Fetching episodes for %s, page %s', show, page)
-        response = requests.get(
-            self.build_episodes_uri(show, page),
-            timeout=(9.05, 9)
-        )
+@handle_exceptions('shows')
+def get_shows(category, page):
+    '''Gets shows for a category'''
+    current_app.logger.info(
+        'Fetching shows for %s, page %s', category, page)
+    response = requests.get(
+        build_shows_uri(category, page),
+        timeout=(9.05, 9)
+    )
 
-        if response.status_code >= 500:
-            raise ClientTimeoutError('Unable to handle request')
+    if response.status_code >= 500:
+        raise ClientTimeoutError('Unable to handle request')
 
-        rss_data = feedparser.parse(response.content)
+    rss_data = feedparser.parse(response.content)
 
-        page_title = rss_data.feed.title
-        entries = RSSClientUtil.extract_episodes(rss_data)
-        episodes, paginations = RSSClientUtil.extract_paginations(entries)
+    page_title = rss_data.feed.title
+    entries = RSSClientUtil.extract_show_or_movie_entries(rss_data)
+    episodes, paginations = RSSClientUtil.extract_paginations(entries)
 
-        return RssResponse(page_title, episodes, paginations)
+    return RssResponse(page_title, episodes, paginations)
 
-    @handle_exceptions('sources')
-    def get_sources(self, episode):
-        '''Gets sources for an episode'''
-        current_app.logger.info('Fetching sources for episode %s', episode)
-        response = requests.get(
-            self.build_sources_uri(episode),
-            timeout=(9.05, 9)
-        )
 
-        if response.status_code >= 500:
-            raise ClientTimeoutError('Unable to handle request')
+@handle_exceptions('episodes')
+def get_episodes(show, page):
+    '''Gets episodes for a show'''
+    current_app.logger.info(
+        'Fetching episodes for %s, page %s', show, page)
+    response = requests.get(
+        build_episodes_uri(show, page),
+        timeout=(9.05, 9)
+    )
 
-        rss_data = feedparser.parse(response.content)
-        page_title = rss_data.feed.title
-        entries = RSSClientUtil.extract_sources(rss_data)
+    if response.status_code >= 500:
+        raise ClientTimeoutError('Unable to handle request')
 
-        return RssResponse(page_title, entries, None)
+    rss_data = feedparser.parse(response.content)
+
+    page_title = rss_data.feed.title
+    entries = RSSClientUtil.extract_episodes(rss_data)
+    episodes, paginations = RSSClientUtil.extract_paginations(entries)
+
+    return RssResponse(page_title, episodes, paginations)
+
+
+@handle_exceptions('sources')
+def get_sources(episode):
+    '''Gets sources for an episode'''
+    current_app.logger.info('Fetching sources for episode %s', episode)
+    response = requests.get(
+        build_sources_uri(episode),
+        timeout=(9.05, 9)
+    )
+
+    if response.status_code >= 500:
+        raise ClientTimeoutError('Unable to handle request')
+
+    rss_data = feedparser.parse(response.content)
+    page_title = rss_data.feed.title
+    entries = RSSClientUtil.extract_sources(rss_data)
+
+    return RssResponse(page_title, entries, None)
