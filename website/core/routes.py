@@ -5,7 +5,7 @@ from functools import wraps
 from flask import redirect, render_template, url_for
 from htmlmin.main import minify
 
-from website import rss_client
+from website import client
 from website.core import bp
 from website.const import (
     DOMAINS, LISTINGS_TEMPLATE, EPISODES_TEMPLATE, SOURCES_TEMPLATE
@@ -49,7 +49,7 @@ def movies(category, page):
     '''Endpoint that returns movies for a given category'''
     return dict(
         current_category=category,
-        response=rss_client.get_movies(category, page))
+        response=client.get_movies(category, page))
 
 
 @bp.route('/shows/<category>/<page>')
@@ -58,7 +58,7 @@ def shows(category, page):
     '''Endpoint that returns shows for a given category'''
     return dict(
         current_category=category,
-        response=rss_client.get_shows(category, page))
+        response=client.get_shows(category, page))
 
 
 @bp.route('/episodes/<show_id>/<page>')
@@ -67,11 +67,11 @@ def episodes(show_id, page):
     '''Endpoint that returns episodes for a show id'''
     return dict(
         current_show=show_id,
-        response=rss_client.get_episodes(show_id, page))
+        response=client.get_episodes(show_id, page))
 
 
 @bp.route('/sources/<episode_id>')
 @templated(SOURCES_TEMPLATE)
 def sources(episode_id):
     '''Endpoint that returns sources for an episode id'''
-    return dict(response=rss_client.get_sources(episode_id))
+    return dict(response=client.get_sources(episode_id))
