@@ -2,11 +2,15 @@ import requests
 import feedparser
 import logging
 
+from website.const import (
+    DRAMA_SHOWS, VARIETY_SHOWS, RECENTLY_ADDED_SHOWS, MOVIES
+)
 from website.models import RssResponse
 from website.client import utils
 from website.client import exceptions
 
 logger = logging.getLogger(__name__)
+SHOWS = {**DRAMA_SHOWS, **VARIETY_SHOWS, **RECENTLY_ADDED_SHOWS}
 
 
 def handle_exceptions(resource):
@@ -41,7 +45,8 @@ def get_movies(category, page):
 
     rss_data = feedparser.parse(response.content)
 
-    page_title = rss_data.feed.title
+    page_title = MOVIES[category] if category in MOVIES \
+        else rss_data.feed.title
     entries = utils.extract_show_or_movie_entries(rss_data)
     movies, paginations = utils.extract_paginations(entries)
 
@@ -62,7 +67,8 @@ def get_shows(category, page):
 
     rss_data = feedparser.parse(response.content)
 
-    page_title = rss_data.feed.title
+    page_title = SHOWS[category] if category in SHOWS \
+        else rss_data.feed.title
     entries = utils.extract_show_or_movie_entries(rss_data)
     episodes, paginations = utils.extract_paginations(entries)
 

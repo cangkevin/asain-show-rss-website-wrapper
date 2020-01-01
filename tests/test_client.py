@@ -30,7 +30,7 @@ def test_get_shows(mocked_response):
             body=resp, status=200)
         rss_resp = client.get_shows('hk-drama', '1')
 
-        assert rss_resp.title == 'HK Drama'
+        assert rss_resp.title == 'HK Dramas'
         assert len(rss_resp.items) == 30
         assert rss_resp.paginations
 
