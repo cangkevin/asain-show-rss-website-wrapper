@@ -1,6 +1,7 @@
+import feedparser
+
 from pathlib import Path
 
-import feedparser
 from website.client import utils
 from website.const import (
     MOVIES_RESP_FILE, EPISODES_RESP_FILE, SOURCES_RESP_FILE

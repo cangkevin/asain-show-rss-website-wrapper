@@ -1,8 +1,10 @@
 var app = new Vue({
   el: '#player',
-  data: {
-    selected: '',
-    height: '',
+  data() {
+    return {
+      selected: '',
+      height: '',
+    }
   },
   beforeMount: function() {
     var sources = this.$el.getElementsByTagName('button')
