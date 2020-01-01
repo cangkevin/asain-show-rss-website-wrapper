@@ -23,7 +23,7 @@
 
     {% for source in response.items %}
       <button type="button" 
-              class="btn" 
+              class="btn mb-3" 
               v-bind:class="{'btn-primary': selected == '{{ source.url }}'}" 
               v-on:click="render" 
               data-source="{{ source.url }}">
