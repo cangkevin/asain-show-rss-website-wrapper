@@ -5,39 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/custom.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/font-awesome.min.css') }}">
     <script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.0.0.min.js') }}" defer></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/bootstrap.min.js') }}" defer></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='js/search.js') }}" defer></script>
     {% block scripts %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body class="h-100">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="/">SEAshows</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#categories" aria-controls="categories" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="categories">
-        <ul class="navbar-nav mr-auto">
-        {% for domain,categories in domains.items() %}
-          {% for label, subcategories in categories.items() %}
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" 
-                 data-toggle="dropdown" href="#" role="button" 
-                 aria-haspopup="true" aria-expanded="false">
-                {{ label }}
+      <div class="container justify-content-start">
+        <a class="navbar-brand" href="/">SEAshows</a>
+        <form id="search" v-on:submit.prevent>
+          <div class="row">
+            <div class="input-group col">
+              <input v-model.trim="query"
+                     v-on:focus="showSuggestions"
+                     v-on:blur="hideSuggestions"
+                     class="form-control form-control-sm border-right-0 border" 
+                     type="search" placeholder="Search...">
+              <span class="input-group-append">
+                <div class="input-group-text bg-white">
+                  <i class="fa fa-search"></i>
+                </div>
+              </span>
+            </div>
+          </div>
+
+          <div id="suggestions" 
+               class="position-absolute list-group"
+               v-bind:class="{ 'd-none': !selected }">
+            <template v-for="result in results">
+              <a :href="'/episodes/'+result.id+'/1'"
+                  class="list-group-item list-group-item-action suggestion"
+                  v-bind:key="result.id">
+                <div class="media">
+                  <img :src="result.image" class="mr-3"/>
+                  <div class="media-body align-self-center">
+                    <h6>[[ result.title ]]</h6>
+                  </div>
+                </div>
               </a>
-              <div class="dropdown-menu">
-                {% for short_text,format_text in subcategories.items() %}
-                <a class="dropdown-item" 
-                   href="{{ url_for('core.'+domain, category=short_text, page=1) }}">
-                  {{ format_text }}
-                </a>
-                {% endfor %}
-              </div>
-            </li>
-          {% endfor %}
-        {% endfor %}
-        </ul>
+            </template>
+          </div>
+        </form>
+      </div>
+    </nav>
+
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3b91ff;">
+      <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#categories" aria-controls="categories" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="categories">
+          <ul class="navbar-nav">
+            {% for domain, categories in domains.items() %}
+              {% for label, subcategories in categories.items() %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle py-1" 
+                     data-toggle="dropdown" href="#" role="button" 
+                    aria-haspopup="true" aria-expanded="false">
+                    {{ label }}
+                  </a>
+                  <div class="dropdown-menu">
+                    {% for short_text,format_text in subcategories.items() %}
+                    <a class="dropdown-item" 
+                       href="{{ url_for('core.'+domain, category=short_text, page=1) }}">
+                      {{ format_text }}
+                    </a>
+                    {% endfor %}
+                  </div>
+                </li>
+              {% endfor %}
+            {% endfor %}    
+          </ul>
+        </div>
       </div>
     </nav>
 

@@ -1,10 +1,12 @@
 import requests
 import feedparser
+import logging
 
-from flask import current_app
 from website.models import RssResponse
 from website.client import utils
 from website.client import exceptions
+
+logger = logging.getLogger(__name__)
 
 
 def handle_exceptions(resource):
@@ -14,14 +16,12 @@ def handle_exceptions(resource):
             try:
                 return func(*args, **kwargs)
             except requests.exceptions.Timeout:
-                current_app.logger.error(
-                    'Request timed out fetching %s for %s',
-                    resource, args[0])
+                logger.error(
+                    'Request timed out fetching %s for %s', resource, args[0])
                 raise exceptions.ClientTimeoutError(
                     'Timeout fetching ' + resource)
             except AttributeError:
-                current_app.logger.error(
-                    'No %s found for %s', resource, args[0])
+                logger.error('No %s found for %s', resource, args[0])
                 raise exceptions.InvalidResourceError(resource + ' not found')
         return wrapper
     return exception_handler_wrapper
@@ -30,8 +30,7 @@ def handle_exceptions(resource):
 @handle_exceptions('movies')
 def get_movies(category, page):
     '''Gets movies for a category'''
-    current_app.logger.info(
-        'Fetching movies for %s, page %s', category, page)
+    logger.info('Fetching movies for %s, page %s', category, page)
     response = requests.get(
         utils.build_movies_uri(category, page),
         timeout=(9.05, 9)
@@ -52,8 +51,7 @@ def get_movies(category, page):
 @handle_exceptions('shows')
 def get_shows(category, page):
     '''Gets shows for a category'''
-    current_app.logger.info(
-        'Fetching shows for %s, page %s', category, page)
+    logger.info('Fetching shows for %s, page %s', category, page)
     response = requests.get(
         utils.build_shows_uri(category, page),
         timeout=(9.05, 9)
@@ -74,8 +72,7 @@ def get_shows(category, page):
 @handle_exceptions('episodes')
 def get_episodes(show, page):
     '''Gets episodes for a show'''
-    current_app.logger.info(
-        'Fetching episodes for %s, page %s', show, page)
+    logger.info('Fetching episodes for %s, page %s', show, page)
     response = requests.get(
         utils.build_episodes_uri(show, page),
         timeout=(9.05, 9)
@@ -96,7 +93,7 @@ def get_episodes(show, page):
 @handle_exceptions('sources')
 def get_sources(episode):
     '''Gets sources for an episode'''
-    current_app.logger.info('Fetching sources for episode %s', episode)
+    logger.info('Fetching sources for episode %s', episode)
     response = requests.get(
         utils.build_sources_uri(episode),
         timeout=(9.05, 9)
