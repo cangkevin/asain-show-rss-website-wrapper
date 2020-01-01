@@ -14,8 +14,8 @@ EMPTY_RESP_FILE = 'tests/data/empty_response.txt'
 LISTINGS_TEMPLATE = 'core/listings.html'
 EPISODES_TEMPLATE = 'core/episodes.html'
 SOURCES_TEMPLATE = 'core/sources.html'
-USER_ERROR_TEMPLATE = '404.html'
-SERVER_ERROR_TEMPLATE = '500.html'
+USER_ERROR_TEMPLATE = 'errors/404.html'
+SERVER_ERROR_TEMPLATE = 'errors/500.html'
 
 # subcategories for shows
 DRAMA_SHOWS = {
