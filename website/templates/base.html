@@ -19,39 +19,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container justify-content-start">
         <a class="navbar-brand" href="/">SEAshows</a>
-        <form id="search" v-on:submit.prevent>
-          <div class="row">
-            <div class="input-group col">
-              <input v-model.trim="query"
-                     v-on:focus="showSuggestions"
-                     v-on:blur="hideSuggestions"
-                     class="form-control form-control-sm border-right-0 border" 
-                     type="search" placeholder="Search...">
-              <span class="input-group-append">
-                <div class="input-group-text bg-white">
-                  <i class="fa fa-search"></i>
-                </div>
-              </span>
-            </div>
-          </div>
-
-          <div id="suggestions" 
-               class="position-absolute list-group"
-               v-bind:class="{ 'd-none': !selected }">
-            <template v-for="result in results">
-              <a :href="'/episodes/'+result.id+'/1'"
-                  class="list-group-item list-group-item-action suggestion"
-                  v-bind:key="result.id">
-                <div class="media">
-                  <img :src="result.image" class="mr-3"/>
-                  <div class="media-body align-self-center">
-                    <h6>[[ result.title ]]</h6>
-                  </div>
-                </div>
-              </a>
-            </template>
-          </div>
-        </form>
+        <div id="search">
+          <search></search>
+        </div>
       </div>
     </nav>
 
