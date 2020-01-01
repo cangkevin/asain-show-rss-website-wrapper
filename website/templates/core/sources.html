@@ -14,21 +14,6 @@
 
 {% block content %}
   <div id="player" class="mb-3">
-    <div id="video-player">
-      <iframe v-bind:src="selected"
-              v-bind:height="height"
-              width="100%"
-              allowfullscreen></iframe>
-    </div>
-
-    {% for source in response.items %}
-      <button type="button" 
-              class="btn" 
-              v-bind:class="{'btn-primary': selected == '{{ source.url }}'}" 
-              v-on:click="render" 
-              data-source="{{ source.url }}">
-        {{ source.title }}     
-      </button>
-    {% endfor %}
+    <video-player v-bind:sources="{{ response.items }}"></video-player>
   </div>
 {% endblock %}
