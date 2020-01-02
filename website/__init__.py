@@ -21,21 +21,15 @@ dictConfig({
 
 from flask import Flask
 from elasticsearch import Elasticsearch
+
+from config import Config
 from website.core import bp as core_bp
 from website.errors import bp as errors_bp
 from website.search import bp as search_bp
 
-def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        ELASTICSEARCH_URL='http://localhost:9200'
-    )
-    if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        app.config.from_mapping(test_config)
-
+def create_app(config_object=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_object)
     app.logger.info('Registering blueprint %s', core_bp.name)
     app.register_blueprint(core_bp)
     app.logger.info('Registering blueprint %s', errors_bp.name)
@@ -44,5 +38,4 @@ def create_app(test_config=None):
     app.register_blueprint(search_bp)
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
         if 'ELASTICSEARCH_URL' in app.config else None
-    
     return app
