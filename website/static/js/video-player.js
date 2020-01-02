@@ -13,6 +13,8 @@ Vue.component('video-player', {
   methods: {
     render: function (event) {
       this.selected = event.target.attributes['data-source'].value
+      var frame = this.$el.firstChild.firstChild
+      frame.contentWindow.location.replace(this.selected)
     }
   },
   template:`
