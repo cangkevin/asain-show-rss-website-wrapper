@@ -19,3 +19,17 @@ body {
     flex-shrink: 0;
     background-color: #f5f5f5;
 }
+
+#suggestions a {
+    z-index: 1
+}
+
+#suggestions a img {
+    max-width: 50px;
+}
+
+.form-control:focus {
+    outline: 0;
+    border-color: initial;
+    box-shadow: none;
+}

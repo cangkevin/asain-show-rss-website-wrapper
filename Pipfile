@@ -10,6 +10,7 @@ responses = "*"
 coveralls = "*"
 commitizen = "*"
 flake8 = "*"
+docker-compose = "*"
 
 [packages]
 requests = "*"
@@ -18,6 +19,7 @@ flask = "*"
 feedparser = "*"
 htmlmin = "*"
 more-itertools = "*"
+elasticsearch = "*"
 
 [requires]
 python_version = "3.6"
