@@ -1,6 +1,7 @@
 import pytest
 import responses
 
+from config import TestConfig
 from website import create_app
 
 
@@ -11,7 +12,7 @@ def mock_base_url(monkeypatch):
 
 @pytest.fixture
 def app():
-    app = create_app({'TESTING': True})
+    app = create_app(TestConfig())
     app.app_context().push()
     yield app
 
