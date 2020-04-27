@@ -7,9 +7,9 @@ from website.search.client import query_index
 logger = logging.getLogger(__name__)
 
 
-@bp.route('/search')
+@bp.route("/search")
 def search_shows():
-    query = request.args.get('q')
-    logger.info('Search query: %s', query)
+    query = request.args.get("q")
+    logger.info("Search query: %s", query)
     response = query_index(query)
     return jsonify(response)
