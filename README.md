@@ -14,6 +14,7 @@ Current content that is supported:
 - Chinese Dramas
 - Chinese Movies
 - Korean Dramas
+- Korean Movies
 - Taiwanese Dramas
 
 SEAshows's user experience is targeted towards a particular demographic, particularly those who are not computer-savvy. There is future work planned to make the site more feature-rich for navigation and searching.
