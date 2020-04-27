@@ -45,6 +45,7 @@ MOVIES = {
     "c-movies-can-dub": "Chinese Movies (Cantonese dub)",
     "hk-movies": "HK Movies",
     "recently-added-can-dub": "Recently Added Movies (Cantonese dub)",
+    "k-movies": "Korean Movies (English sub)",
 }
 
 # encompass all subcategories of movies
