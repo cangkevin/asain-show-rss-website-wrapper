@@ -6,4 +6,4 @@ intended for internal use.
 """
 from collections import namedtuple
 
-RssResponse = namedtuple('RssResponse', 'title items paginations')
+RssResponse = namedtuple("RssResponse", "title items paginations")

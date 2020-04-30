@@ -7,7 +7,7 @@ from website import create_app
 
 @pytest.fixture(autouse=True)
 def mock_base_url(monkeypatch):
-    monkeypatch.setenv('BASE_URL', 'http://base_url/')
+    monkeypatch.setenv("BASE_URL", "http://base_url/")
 
 
 @pytest.fixture
