@@ -39,7 +39,7 @@ def get_movies(category, page):
     if response.status_code >= 500:
         raise exceptions.ClientTimeoutError("Unable to handle request")
 
-    rss_data = feedparser.parse(response.content)
+    rss_data = feedparser.parse(response.text)
 
     page_title = MOVIES[category] if category in MOVIES else rss_data.feed.title
     entries = utils.extract_show_or_movie_entries(rss_data)
@@ -57,7 +57,7 @@ def get_shows(category, page):
     if response.status_code >= 500:
         raise exceptions.ClientTimeoutError("Unable to handle request")
 
-    rss_data = feedparser.parse(response.content)
+    rss_data = feedparser.parse(response.text)
 
     page_title = SHOWS[category] if category in SHOWS else rss_data.feed.title
     entries = utils.extract_show_or_movie_entries(rss_data)
@@ -75,7 +75,7 @@ def get_episodes(show, page):
     if response.status_code >= 500:
         raise exceptions.ClientTimeoutError("Unable to handle request")
 
-    rss_data = feedparser.parse(response.content)
+    rss_data = feedparser.parse(response.text)
 
     page_title = rss_data.feed.title
     entries = utils.extract_episodes(rss_data)
@@ -93,7 +93,7 @@ def get_sources(episode):
     if response.status_code >= 500:
         raise exceptions.ClientTimeoutError("Unable to handle request")
 
-    rss_data = feedparser.parse(response.content)
+    rss_data = feedparser.parse(response.text)
     page_title = rss_data.feed.title
     entries = utils.extract_sources(rss_data)
 

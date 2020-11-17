@@ -10,6 +10,8 @@ install: pipenv install --dev
 jobs:
   include:
     - stage: 'test'
+      python: 3.8
+    - stage: 'test'
       python: 3.7
       after_success: coveralls
     - stage: 'test'
