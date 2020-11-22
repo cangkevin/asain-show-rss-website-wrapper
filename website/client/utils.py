@@ -8,22 +8,22 @@ from more_itertools import unique_everseen
 
 def build_movies_uri(category, page):
     """Constructs the request URI for movies endpoint"""
-    return "".join([os.getenv("BASE_URL"), "movies/", category, "/", page])
+    return "{}/movies/{}/{}".format(os.getenv("BASE_URL"), category, page)
 
 
 def build_shows_uri(category, page):
     """Constructs the request URI for shows endpoint"""
-    return "".join([os.getenv("BASE_URL"), "category/", category, "/", page])
+    return "{}/category/{}/{}".format(os.getenv("BASE_URL"), category, page)
 
 
 def build_episodes_uri(show, page):
     """Constructs the request URI for episodes endpoint"""
-    return "".join([os.getenv("BASE_URL"), "info/", show, "/", page])
+    return "{}/info/{}/{}".format(os.getenv("BASE_URL"), show, page)
 
 
 def build_sources_uri(episode):
     """Constructs the sources URI for sources endpoint"""
-    return "".join([os.getenv("BASE_URL"), "episode/", episode])
+    return "{}/episode/{}".format(os.getenv("BASE_URL"), episode)
 
 
 def extract_paginations(entries):
@@ -40,7 +40,7 @@ def extract_paginations(entries):
 
 
 def extract_picture(entry):
-    return BeautifulSoup(entry.summary, features="html.parser").find("img")["src"]
+    return BeautifulSoup(entry.summary, "lxml").find("img")["src"]
 
 
 def extract_id(entry):
